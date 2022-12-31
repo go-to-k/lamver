@@ -2,11 +2,10 @@ package main
 
 import (
 	"context"
+	"lamver/internal/app"
+	"lamver/internal/logger"
+	"lamver/internal/version"
 	"os"
-
-	"github.com/go-to-k/lamver/internal/app"
-	"github.com/go-to-k/lamver/internal/logger"
-	"github.com/go-to-k/lamver/internal/version"
 )
 
 func main() {

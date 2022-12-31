@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"fmt"
+	"lamver/pkg/client"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -11,9 +13,7 @@ import (
 
 type App struct {
 	Cli             *cli.App
-	StackName       string
 	Profile         string
-	Region          string
 	InteractiveMode bool
 }
 
@@ -22,27 +22,13 @@ func NewApp(version string) *App {
 
 	app.Cli = &cli.App{
 		Name:  "lamver",
-		Usage: "A CLI tool to force delete the entire CloudFormation stack.",
+		Usage: "CLI tool to display Lambda runtime and versions.",
 		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:        "stackName",
-				Aliases:     []string{"s"},
-				Usage:       "CloudFormation stack name",
-				Required:    true,
-				Destination: &app.StackName,
-			},
 			&cli.StringFlag{
 				Name:        "profile",
 				Aliases:     []string{"p"},
 				Usage:       "AWS profile name",
 				Destination: &app.Profile,
-			},
-			&cli.StringFlag{
-				Name:        "region",
-				Aliases:     []string{"r"},
-				Value:       "ap-northeast-1",
-				Usage:       "AWS region",
-				Destination: &app.Region,
 			},
 			&cli.BoolFlag{
 				Name:        "interactive",
@@ -71,6 +57,16 @@ func (app *App) getAction() func(c *cli.Context) error {
 		if err != nil {
 			return err
 		}
+
+		ec2 := client.NewEC2Client(config)
+		regions, err := ec2.DescribeRegions(c.Context)
+		if err != nil {
+			return err
+		}
+
+		for _, region := range regions {
+			fmt.Println(region)
+		}
 		return nil
 	}
 }
@@ -82,9 +78,10 @@ func (app *App) loadAwsConfig(ctx context.Context) (aws.Config, error) {
 	)
 
 	if app.Profile != "" {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(app.Region), config.WithSharedConfigProfile(app.Profile))
+		// cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(app.Region), config.WithSharedConfigProfile(app.Profile))
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(app.Profile))
 	} else {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(app.Region))
+		cfg, err = config.LoadDefaultConfig(ctx)
 	}
 
 	return cfg, err

@@ -11,7 +11,7 @@ type Ec2 struct {
 	client *ec2.Client
 }
 
-func NewEC2Client(config aws.Config) *Ec2 {
+func NewEc2Client(config aws.Config) *Ec2 {
 	ec2Client := ec2.NewFromConfig(config)
 
 	return &Ec2{

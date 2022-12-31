@@ -58,15 +58,25 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		ec2 := client.NewEC2Client(config)
+		ec2 := client.NewEc2Client(config)
 		regions, err := ec2.DescribeRegions(c.Context)
 		if err != nil {
 			return err
 		}
-
 		for _, region := range regions {
 			fmt.Println(region)
 		}
+
+		lambda := client.NewLambdaClient(config)
+		functions, err := lambda.ListFunctions(c.Context)
+		if err != nil {
+			return err
+		}
+		for _, function := range functions {
+			fmt.Println(*function.FunctionName, function.Runtime)
+		}
+		fmt.Println(len(functions))
+
 		return nil
 	}
 }

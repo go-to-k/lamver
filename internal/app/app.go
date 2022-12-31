@@ -54,8 +54,9 @@ func (app *App) Run(ctx context.Context) error {
 // TODO: the case that does not specify region in any config files
 // TODO: loop for all regions
 // TODO: display for table style
-// TODO: selection of kind of Lambda runtime
-// TODO: selection of regions
+// TODO: interactive modes
+// TODO: selection(filter) of kind of Lambda runtime
+// TODO: selection(filter) of regions
 // TODO: max items(input to params for lambda methods)
 // TODO: sort (order by count desc)?
 func (app *App) getAction() func(c *cli.Context) error {

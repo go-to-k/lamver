@@ -1,0 +1,20 @@
+{
+    "cSpell.words": [
+        "lamver",
+        "jessevdk",
+        "errgroup",
+        "zerolog",
+        "Msgf",
+        "tablewriter",
+        "ldflags",
+        "goreleaser",
+        "Unshallow",
+        "unshallow",
+        "gomod",
+    ],
+    "gopls": {
+        "analyses": {
+            "shadow": true
+        }
+    },
+}

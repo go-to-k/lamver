@@ -87,6 +87,13 @@ func (app *App) loadAwsConfig(ctx context.Context) (aws.Config, error) {
 		err error
 	)
 
+	// TODO: the case that does not specify region in any config files
+	// TODO: loop for all regions
+	// TODO: display for table style
+	// TODO: selection of kind of Lambda runtime
+	// TODO: selection of regions
+	// TODO: max items(input to params for lambda methods)
+
 	if app.Profile != "" {
 		// cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(app.Region), config.WithSharedConfigProfile(app.Profile))
 		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(app.Profile))

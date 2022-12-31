@@ -57,6 +57,7 @@ func (app *App) Run(ctx context.Context) error {
 // TODO: interactive modes
 // TODO: selection(filter) of kind of Lambda runtime
 // TODO: selection(filter) of regions
+// TODO: selection(filter) of keyword(prefix, suffix, etc...) of function names
 // TODO: max items(input to params for lambda methods)
 // TODO: sort (order by count desc)?
 func (app *App) getAction() func(c *cli.Context) error {

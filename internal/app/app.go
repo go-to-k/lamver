@@ -51,54 +51,57 @@ func (app *App) Run(ctx context.Context) error {
 	return app.Cli.RunContext(ctx, os.Args)
 }
 
+// TODO: the case that does not specify region in any config files
+// TODO: loop for all regions
+// TODO: display for table style
+// TODO: selection of kind of Lambda runtime
+// TODO: selection of regions
+// TODO: max items(input to params for lambda methods)
+// TODO: sort (order by count desc)?
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		config, err := app.loadAwsConfig(c.Context)
+		cfg, err := app.loadAwsConfig(c.Context, "ap-northeast-1") // TODO: use DEFAULT_REGION by cli option?
 		if err != nil {
 			return err
 		}
 
-		ec2 := client.NewEc2Client(config)
+		ec2 := client.NewEc2Client(cfg)
 		regions, err := ec2.DescribeRegions(c.Context)
 		if err != nil {
 			return err
 		}
 		for _, region := range regions {
 			fmt.Println(region)
-		}
+			cfg, err := app.loadAwsConfig(c.Context, region)
+			if err != nil {
+				return err
+			}
 
-		lambda := client.NewLambdaClient(config)
-		functions, err := lambda.ListFunctions(c.Context)
-		if err != nil {
-			return err
+			lambda := client.NewLambdaClient(cfg)
+			functions, err := lambda.ListFunctions(c.Context)
+			if err != nil {
+				return err
+			}
+			for _, function := range functions {
+				fmt.Println(*function.FunctionName, function.Runtime)
+			}
+			fmt.Println(len(functions))
 		}
-		for _, function := range functions {
-			fmt.Println(*function.FunctionName, function.Runtime)
-		}
-		fmt.Println(len(functions))
 
 		return nil
 	}
 }
 
-func (app *App) loadAwsConfig(ctx context.Context) (aws.Config, error) {
+func (app *App) loadAwsConfig(ctx context.Context, region string) (aws.Config, error) {
 	var (
 		cfg aws.Config
 		err error
 	)
 
-	// TODO: the case that does not specify region in any config files
-	// TODO: loop for all regions
-	// TODO: display for table style
-	// TODO: selection of kind of Lambda runtime
-	// TODO: selection of regions
-	// TODO: max items(input to params for lambda methods)
-
 	if app.Profile != "" {
-		// cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(app.Region), config.WithSharedConfigProfile(app.Profile))
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(app.Profile))
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(region), config.WithSharedConfigProfile(app.Profile))
 	} else {
-		cfg, err = config.LoadDefaultConfig(ctx)
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(region))
 	}
 
 	return cfg, err

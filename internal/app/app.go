@@ -60,7 +60,6 @@ func (app *App) Run(ctx context.Context) error {
 	return app.Cli.RunContext(ctx, os.Args)
 }
 
-// TODO: loop for all regions
 // TODO: display for table style
 // TODO: interactive modes
 // TODO: selection(filter) of kind of Lambda runtime

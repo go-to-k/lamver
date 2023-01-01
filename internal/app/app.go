@@ -11,9 +11,12 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+const DEFAULT_AWS_REGION = "us-east-1"
+
 type App struct {
 	Cli             *cli.App
 	Profile         string
+	DefaultRegion   string
 	InteractiveMode bool
 }
 
@@ -29,6 +32,12 @@ func NewApp(version string) *App {
 				Aliases:     []string{"p"},
 				Usage:       "AWS profile name",
 				Destination: &app.Profile,
+			},
+			&cli.StringFlag{
+				Name:        "region",
+				Aliases:     []string{"r"},
+				Usage:       "AWS default region",
+				Destination: &app.DefaultRegion,
 			},
 			&cli.BoolFlag{
 				Name:        "interactive",
@@ -51,7 +60,6 @@ func (app *App) Run(ctx context.Context) error {
 	return app.Cli.RunContext(ctx, os.Args)
 }
 
-// TODO: the case that does not specify region in any config files
 // TODO: loop for all regions
 // TODO: display for table style
 // TODO: interactive modes
@@ -60,11 +68,11 @@ func (app *App) Run(ctx context.Context) error {
 // TODO: selection(filter) of keyword(prefix, suffix, etc...) of function names
 // TODO: max items(input to params for lambda methods)
 // TODO: sort (order by count desc)?
-// TODO: use us-east-1 if no default region is specified
+// TODO: write app tests for regions
 // TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		cfg, err := app.loadAwsConfig(c.Context, "ap-northeast-1") // TODO: use DEFAULT_REGION by cli option?
+		cfg, err := app.loadAwsConfig(c.Context, app.DefaultRegion)
 		if err != nil {
 			return err
 		}
@@ -103,9 +111,16 @@ func (app *App) loadAwsConfig(ctx context.Context, region string) (aws.Config, e
 	)
 
 	if app.Profile != "" {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(region), config.WithSharedConfigProfile(app.Profile))
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(app.Profile))
 	} else {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(region))
+		cfg, err = config.LoadDefaultConfig(ctx)
+	}
+
+	if region != "" {
+		cfg.Region = region
+	}
+	if cfg.Region == "" {
+		cfg.Region = DEFAULT_AWS_REGION
 	}
 
 	return cfg, err

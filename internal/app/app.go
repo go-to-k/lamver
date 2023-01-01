@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"lamver/internal/logger"
 	"lamver/pkg/client"
 	"os"
 
@@ -60,7 +61,6 @@ func (app *App) Run(ctx context.Context) error {
 	return app.Cli.RunContext(ctx, os.Args)
 }
 
-// TODO: display for table style
 // TODO: interactive modes
 // TODO: selection(filter) of kind of Lambda runtime
 // TODO: selection(filter) of regions
@@ -76,13 +76,19 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
+		functionHeader := []string{"Region", "FunctionName", "Runtime"}
+		functionData := [][]string{}
+
 		ec2 := client.NewEC2Client(cfg)
 		regions, err := ec2.DescribeRegions(c.Context)
 		if err != nil {
 			return err
 		}
+
 		for _, region := range regions {
-			fmt.Println(region)
+			if region == "ap-northeast-1" {
+				continue
+			}
 			cfg, err := app.loadAwsConfig(c.Context, region)
 			if err != nil {
 				return err
@@ -93,12 +99,13 @@ func (app *App) getAction() func(c *cli.Context) error {
 			if err != nil {
 				return err
 			}
+
 			for _, function := range functions {
-				fmt.Println(*function.FunctionName, function.Runtime)
+				functionData = append(functionData, []string{region, string(function.Runtime), *function.FunctionName})
 			}
-			fmt.Println(len(functions))
 		}
 
+		fmt.Println(*logger.ToStringAsTableFormat(functionHeader, functionData))
 		return nil
 	}
 }

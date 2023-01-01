@@ -20,7 +20,7 @@ func NewLambdaClient(config aws.Config) *Lambda {
 	}
 }
 
-func (lambdaClient *Lambda) ListFunctions(ctx context.Context) ([]types.FunctionConfiguration, error) {
+func (c *Lambda) ListFunctions(ctx context.Context) ([]types.FunctionConfiguration, error) {
 	var nextMarker *string
 	outputs := []types.FunctionConfiguration{}
 
@@ -29,7 +29,7 @@ func (lambdaClient *Lambda) ListFunctions(ctx context.Context) ([]types.Function
 			Marker: nextMarker,
 		}
 
-		output, err := lambdaClient.client.ListFunctions(ctx, input)
+		output, err := c.client.ListFunctions(ctx, input)
 		if err != nil {
 			return nil, err
 		}

@@ -67,7 +67,7 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		ec2 := client.NewEc2Client(cfg)
+		ec2 := client.NewEC2Client(cfg)
 		regions, err := ec2.DescribeRegions(c.Context)
 		if err != nil {
 			return err

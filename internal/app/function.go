@@ -10,7 +10,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (app *App) getRuntimeAndRegions(context context.Context) (regionList []string, runtimeList []string, err error) {
+func (app *App) getAllRuntimeAndRegions(context context.Context) (regionList []string, runtimeList []string, err error) {
 	cfg, err := app.loadAwsConfig(context, app.DefaultRegion)
 	if err != nil {
 		return regionList, runtimeList, err

@@ -57,7 +57,7 @@ func (app *App) Run(ctx context.Context) error {
 
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		regionList, runtimeList, err := app.getRuntimeAndRegions(c.Context)
+		regionList, runtimeList, err := app.getAllRuntimeAndRegions(c.Context)
 		if err != nil {
 			return err
 		}

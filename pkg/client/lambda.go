@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"sort"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
@@ -44,4 +45,17 @@ func (c *Lambda) ListFunctions(ctx context.Context) ([]types.FunctionConfigurati
 	}
 
 	return outputs, nil
+}
+
+func (c *Lambda) ListRuntimeValues() []string {
+	var r types.Runtime
+	runtimeStrList := []string{}
+	runtimeList := r.Values()
+
+	for _, runtime := range runtimeList {
+		runtimeStrList = append(runtimeStrList, string(runtime))
+	}
+
+	sort.Strings(runtimeStrList)
+	return runtimeStrList
 }

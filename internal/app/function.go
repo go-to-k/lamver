@@ -117,7 +117,7 @@ func (app *App) putToFunctionChannelByRegion(
 	return nil
 }
 
-func (app *App) sortFunctionMap(regionList []string, runtimeList []string, functionMap map[string]map[string][][]string) [][]string {
+func (app *App) sortAndSetFunctionList(regionList []string, runtimeList []string, functionMap map[string]map[string][][]string) [][]string {
 	var functionData [][]string
 
 	for _, runtime := range runtimeList {

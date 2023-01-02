@@ -1,17 +1,15 @@
 package app
 
 import (
-	"bufio"
 	"context"
 	"fmt"
-	"lamver/internal/logger"
+	"lamver/internal/io"
 	"lamver/internal/types"
 	"lamver/pkg/client"
 	"os"
 	"strings"
 	"sync"
 
-	"github.com/AlecAivazis/survey/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/urfave/cli/v2"
@@ -102,17 +100,17 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		targetRegions, continuation := getCheckboxes(regionsLabel, regionList)
+		targetRegions, continuation := io.GetCheckboxes(regionsLabel, regionList)
 		if !continuation {
 			return nil
 		}
 
-		targetRuntime, continuation := getCheckboxes(runtimeLabel, runtimeList)
+		targetRuntime, continuation := io.GetCheckboxes(runtimeLabel, runtimeList)
 		if !continuation {
 			return nil
 		}
 
-		keyword := inputKeywordForFilter()
+		keyword := io.InputKeywordForFilter()
 
 		eg, _ = errgroup.WithContext(c.Context)
 		wg := sync.WaitGroup{}
@@ -195,7 +193,7 @@ func (app *App) getAction() func(c *cli.Context) error {
 			}
 		}
 
-		fmt.Fprintf(os.Stderr, *logger.ToStringAsTableFormat(functionHeader, functionData))
+		fmt.Fprintf(os.Stderr, *io.ToStringAsTableFormat(functionHeader, functionData))
 		fmt.Fprintf(os.Stderr, "%d counts hit! ", len(functionData))
 
 		return nil
@@ -222,67 +220,4 @@ func (app *App) loadAwsConfig(ctx context.Context, region string) (aws.Config, e
 	}
 
 	return cfg, err
-}
-
-func getCheckboxes(label string, opts []string) ([]string, bool) {
-	var checkboxes []string
-
-	for {
-		prompt := &survey.MultiSelect{
-			Message: label,
-			Options: opts,
-		}
-		survey.AskOne(prompt, &checkboxes)
-
-		if len(checkboxes) == 0 {
-			logger.Logger.Warn().Msg("Select values!")
-			ok := getYesNo("Do you want to finish?")
-			if ok {
-				logger.Logger.Info().Msg("Finished...")
-				return checkboxes, false
-			}
-			continue
-		}
-
-		ok := getYesNo("OK?")
-		if ok {
-			return checkboxes, true
-		}
-	}
-}
-
-func inputKeywordForFilter() string {
-	reader := bufio.NewReader(os.Stdin)
-
-	fmt.Fprintf(os.Stderr, "Filter keywords of function names: ")
-	s, _ := reader.ReadString('\n')
-	fmt.Fprintln(os.Stderr)
-
-	s = strings.TrimSpace(s)
-
-	return s
-}
-
-func getYesNo(label string) bool {
-	choices := "Y/n"
-	r := bufio.NewReader(os.Stdin)
-	var s string
-
-	for {
-		fmt.Fprintf(os.Stderr, "%s (%s) ", label, choices)
-		s, _ = r.ReadString('\n')
-		fmt.Fprintln(os.Stderr)
-
-		s = strings.TrimSpace(s)
-		if s == "" {
-			return true
-		}
-		s = strings.ToLower(s)
-		if s == "y" || s == "yes" {
-			return true
-		}
-		if s == "n" || s == "no" {
-			return false
-		}
-	}
 }

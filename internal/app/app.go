@@ -7,8 +7,8 @@ import (
 	"lamver/internal/logger"
 	"lamver/pkg/client"
 	"os"
-	"sort"
 	"strings"
+	"sync"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -65,9 +65,27 @@ func (app *App) Run(ctx context.Context) error {
 // TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules
 // TODO: aggregate output option
 // TODO: CSV files and JSON output option
+
+type LambdaFunction struct {
+	Runtime      string
+	Region       string
+	FunctionName string
+	LastModified string
+}
+
+func NewLambdaFunction(runtime string, region string, functionName string, lastModified string) *LambdaFunction {
+	return &LambdaFunction{
+		Runtime:      runtime,
+		Region:       region,
+		FunctionName: functionName,
+		LastModified: lastModified,
+	}
+}
+
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		functionHeader := []string{"Region", "FunctionName", "Runtime", "LastModified"}
+
+		functionHeader := []string{"Runtime", "Region", "FunctionName", "LastModified"}
 		functionData := [][]string{}
 
 		cfg, err := app.loadAwsConfig(c.Context, app.DefaultRegion)
@@ -80,13 +98,13 @@ func (app *App) getAction() func(c *cli.Context) error {
 		runtimeLabel := "Select runtime values you want to display.\n"
 
 		var (
-			regionsList []string
+			regionList  []string
 			runtimeList []string
 		)
 
 		eg.Go(func() error {
 			ec2 := client.NewEC2Client(cfg)
-			regionsList, err = ec2.DescribeRegions(c.Context)
+			regionList, err = ec2.DescribeRegions(c.Context)
 			if err != nil {
 				return err
 			}
@@ -103,8 +121,7 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		sort.Strings(regionsList)
-		targetRegions, continuation := getCheckboxes(regionsLabel, regionsList)
+		targetRegions, continuation := getCheckboxes(regionsLabel, regionList)
 		if !continuation {
 			return nil
 		}
@@ -114,36 +131,76 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return nil
 		}
 
-		runtimeMap := make(map[string][][]string, len(targetRuntime))
+		eg, _ = errgroup.WithContext(c.Context)
+		wg := sync.WaitGroup{}
+		functionMap := make(map[string]map[string][][]string, len(targetRuntime))
+		functionCh := make(chan *LambdaFunction)
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for f := range functionCh {
+				if _, exist := functionMap[f.Runtime]; !exist {
+					functionMap[f.Runtime] = make(map[string][][]string, len(targetRegions))
+				}
+				functionMap[f.Runtime][f.Region] = append(functionMap[f.Runtime][f.Region], []string{f.FunctionName, f.LastModified})
+			}
+		}()
+
 		// TODO: refactor for nested loops
 		for _, region := range targetRegions {
-			cfg, err := app.loadAwsConfig(c.Context, region)
-			if err != nil {
-				return err
-			}
+			region := region
+			eg.Go(func() error {
+				cfg, err := app.loadAwsConfig(c.Context, region)
+				if err != nil {
+					return err
+				}
 
-			lambda := client.NewLambdaClient(cfg)
-			functions, err := lambda.ListFunctions(c.Context)
-			if err != nil {
-				return err
-			}
+				lambda := client.NewLambdaClient(cfg)
+				functions, err := lambda.ListFunctions(c.Context)
+				if err != nil {
+					return err
+				}
 
-			for _, function := range functions {
-				for _, runtime := range targetRuntime {
-					if string(function.Runtime) == runtime {
-						runtimeMap[runtime] = append(runtimeMap[runtime], []string{region, *function.FunctionName, *function.LastModified})
-						break
+				for _, function := range functions {
+					for _, runtime := range targetRuntime {
+						if string(function.Runtime) == runtime {
+							functionCh <- NewLambdaFunction(runtime, region, *function.FunctionName, *function.LastModified)
+							break
+						}
 					}
 				}
-			}
+				return nil
+			})
 		}
 
-		for runtimeKey, runtimeValue := range runtimeMap {
-			for _, v := range runtimeValue {
-				var data []string
-				data = append(data, runtimeKey)
-				data = append(data, v...)
-				functionData = append(functionData, data)
+		go func() {
+			eg.Wait()
+			close(functionCh)
+		}()
+
+		if err := eg.Wait(); err != nil {
+			return err
+		}
+
+		wg.Wait() // for functionMap race
+
+		// sort and set to functionData
+		for _, runtime := range runtimeList {
+			if _, exist := functionMap[runtime]; !exist {
+				continue
+			}
+			for _, region := range regionList {
+				if _, exist := functionMap[runtime][region]; !exist {
+					continue
+				}
+				for _, f := range functionMap[runtime][region] {
+					var data []string
+					data = append(data, runtime)
+					data = append(data, region)
+					data = append(data, f...)
+					functionData = append(functionData, data)
+				}
 			}
 		}
 

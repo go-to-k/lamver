@@ -6,3 +6,7 @@ type LambdaFunctionData struct {
 	FunctionName string
 	LastModified string
 }
+
+func GetLambdaFunctionDataKeys() []string {
+	return []string{"Runtime", "Region", "FunctionName", "LastModified"}
+}

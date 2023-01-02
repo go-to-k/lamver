@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"lamver/internal/io"
 	"lamver/internal/types"
 	"lamver/pkg/client"
@@ -10,18 +9,15 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
 )
 
-const DEFAULT_AWS_REGION = "us-east-1"
-
 type App struct {
-	Cli           *cli.App
-	Profile       string
-	DefaultRegion string
+	Cli               *cli.App
+	Profile           string
+	DefaultRegion     string
+	CSVOutputFilePath string
 }
 
 func NewApp(version string) *App {
@@ -43,6 +39,12 @@ func NewApp(version string) *App {
 				Usage:       "AWS default region",
 				Destination: &app.DefaultRegion,
 			},
+			&cli.StringFlag{
+				Name:        "output",
+				Aliases:     []string{"o"},
+				Usage:       "Output file path for CSV format",
+				Destination: &app.CSVOutputFilePath,
+			},
 		},
 	}
 
@@ -58,13 +60,14 @@ func (app *App) Run(ctx context.Context) error {
 }
 
 // TODO: CSV files and JSON output option
+// TODO: refactor for nested loops
 // TODO: write app tests for regions
 // TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules
 
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
 
-		functionHeader := []string{"Runtime", "Region", "FunctionName", "LastModified"}
+		functionHeader := types.GetLambdaFunctionDataKeys()
 		functionData := [][]string{}
 
 		cfg, err := app.loadAwsConfig(c.Context, app.DefaultRegion)
@@ -128,7 +131,6 @@ func (app *App) getAction() func(c *cli.Context) error {
 			}
 		}()
 
-		// TODO: refactor for nested loops
 		for _, region := range targetRegions {
 			region := region
 			eg.Go(func() error {
@@ -193,31 +195,10 @@ func (app *App) getAction() func(c *cli.Context) error {
 			}
 		}
 
-		fmt.Fprintf(os.Stderr, *io.ToStringAsTableFormat(functionHeader, functionData))
-		fmt.Fprintf(os.Stderr, "%d counts hit! ", len(functionData))
+		if err := io.OutputResult(functionHeader, functionData, app.CSVOutputFilePath); err != nil {
+			return err
+		}
 
 		return nil
 	}
-}
-
-func (app *App) loadAwsConfig(ctx context.Context, region string) (aws.Config, error) {
-	var (
-		cfg aws.Config
-		err error
-	)
-
-	if app.Profile != "" {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(app.Profile))
-	} else {
-		cfg, err = config.LoadDefaultConfig(ctx)
-	}
-
-	if region != "" {
-		cfg.Region = region
-	}
-	if cfg.Region == "" {
-		cfg.Region = DEFAULT_AWS_REGION
-	}
-
-	return cfg, err
 }

@@ -59,7 +59,6 @@ func (app *App) Run(ctx context.Context) error {
 	return app.Cli.RunContext(ctx, os.Args)
 }
 
-// TODO: CSV files and JSON output option
 // TODO: refactor for nested loops
 // TODO: write app tests for regions
 // TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules

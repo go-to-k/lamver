@@ -1,4 +1,4 @@
-package app
+package action
 
 import (
 	"context"
@@ -9,14 +9,14 @@ import (
 
 const DEFAULT_AWS_REGION = "us-east-1"
 
-func (app *App) loadAwsConfig(ctx context.Context, region string) (aws.Config, error) {
+func loadAwsConfig(ctx context.Context, region string, profile string) (aws.Config, error) {
 	var (
 		cfg aws.Config
 		err error
 	)
 
-	if app.Profile != "" {
-		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(app.Profile))
+	if profile != "" {
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(profile))
 	} else {
 		cfg, err = config.LoadDefaultConfig(ctx)
 	}

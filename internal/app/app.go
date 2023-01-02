@@ -60,12 +60,10 @@ func (app *App) Run(ctx context.Context) error {
 }
 
 // TODO: selection(filter) of keyword(prefix, suffix, etc...) of function names
-// TODO: max items(input to params for lambda methods)
-// TODO: sort (order by count desc)?
-// TODO: write app tests for regions
-// TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules
 // TODO: aggregate output option
 // TODO: CSV files and JSON output option
+// TODO: write app tests for regions
+// TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules
 
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {

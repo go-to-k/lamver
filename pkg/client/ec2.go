@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"sort"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -32,5 +33,6 @@ func (c *EC2) DescribeRegions(ctx context.Context) ([]string, error) {
 		outputRegions = append(outputRegions, *region.RegionName)
 	}
 
+	sort.Strings(outputRegions)
 	return outputRegions, nil
 }

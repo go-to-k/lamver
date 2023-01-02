@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/urfave/cli/v2"
+	"golang.org/x/sync/errgroup"
 )
 
 const DEFAULT_AWS_REGION = "us-east-1"
@@ -74,23 +75,40 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		// TODO: goroutine(wg)
-		ec2 := client.NewEC2Client(cfg)
+		eg, _ := errgroup.WithContext(c.Context)
 		regionsLabel := "Select regions you want to display.\n"
-		regionsList, err := ec2.DescribeRegions(c.Context)
-		if err != nil {
+		runtimeLabel := "Select runtime values you want to display.\n"
+
+		var (
+			regionsList []string
+			runtimeList []string
+		)
+
+		eg.Go(func() error {
+			ec2 := client.NewEC2Client(cfg)
+			regionsList, err = ec2.DescribeRegions(c.Context)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+
+		eg.Go(func() error {
+			lambda := client.NewLambdaClient(cfg)
+			runtimeList = lambda.ListRuntimeValues()
+			return nil
+		})
+
+		if err := eg.Wait(); err != nil {
 			return err
 		}
+
 		sort.Strings(regionsList)
 		targetRegions, continuation := getCheckboxes(regionsLabel, regionsList)
 		if !continuation {
 			return nil
 		}
 
-		// TODO: goroutine(wg)
-		lambda := client.NewLambdaClient(cfg)
-		runtimeLabel := "Select runtime values you want to display.\n"
-		runtimeList := lambda.ListRuntimeValues()
 		targetRuntime, continuation := getCheckboxes(runtimeLabel, runtimeList)
 		if !continuation {
 			return nil

@@ -59,7 +59,6 @@ func (app *App) Run(ctx context.Context) error {
 	return app.Cli.RunContext(ctx, os.Args)
 }
 
-// TODO: selection(filter) of keyword(prefix, suffix, etc...) of function names
 // TODO: aggregate output option
 // TODO: CSV files and JSON output option
 // TODO: write app tests for regions
@@ -114,6 +113,8 @@ func (app *App) getAction() func(c *cli.Context) error {
 			return nil
 		}
 
+		keyword := inputKeywordForFilter()
+
 		eg, _ = errgroup.WithContext(c.Context)
 		wg := sync.WaitGroup{}
 		functionMap := make(map[string]map[string][][]string, len(targetRuntime))
@@ -147,15 +148,18 @@ func (app *App) getAction() func(c *cli.Context) error {
 
 				for _, function := range functions {
 					for _, runtime := range targetRuntime {
-						if string(function.Runtime) == runtime {
+						if string(function.Runtime) != runtime {
+							continue
+						}
+						if strings.Contains(*function.FunctionName, keyword) {
 							functionCh <- &types.LambdaFunctionData{
 								Runtime:      runtime,
 								Region:       region,
 								FunctionName: *function.FunctionName,
 								LastModified: *function.LastModified,
 							}
-							break
 						}
+						break
 					}
 				}
 				return nil
@@ -244,6 +248,18 @@ func getCheckboxes(label string, opts []string) ([]string, bool) {
 			return checkboxes, true
 		}
 	}
+}
+
+func inputKeywordForFilter() string {
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Fprintf(os.Stderr, "Filter keywords of function names: ")
+	s, _ := reader.ReadString('\n')
+	fmt.Fprintln(os.Stderr)
+
+	s = strings.TrimSpace(s)
+
+	return s
 }
 
 func getYesNo(label string) bool {

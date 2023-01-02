@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"lamver/internal/logger"
+	"lamver/internal/types"
 	"lamver/pkg/client"
 	"os"
 	"strings"
@@ -66,22 +67,6 @@ func (app *App) Run(ctx context.Context) error {
 // TODO: aggregate output option
 // TODO: CSV files and JSON output option
 
-type LambdaFunction struct {
-	Runtime      string
-	Region       string
-	FunctionName string
-	LastModified string
-}
-
-func NewLambdaFunction(runtime string, region string, functionName string, lastModified string) *LambdaFunction {
-	return &LambdaFunction{
-		Runtime:      runtime,
-		Region:       region,
-		FunctionName: functionName,
-		LastModified: lastModified,
-	}
-}
-
 func (app *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
 
@@ -134,7 +119,7 @@ func (app *App) getAction() func(c *cli.Context) error {
 		eg, _ = errgroup.WithContext(c.Context)
 		wg := sync.WaitGroup{}
 		functionMap := make(map[string]map[string][][]string, len(targetRuntime))
-		functionCh := make(chan *LambdaFunction)
+		functionCh := make(chan *types.LambdaFunctionData)
 
 		wg.Add(1)
 		go func() {
@@ -165,7 +150,12 @@ func (app *App) getAction() func(c *cli.Context) error {
 				for _, function := range functions {
 					for _, runtime := range targetRuntime {
 						if string(function.Runtime) == runtime {
-							functionCh <- NewLambdaFunction(runtime, region, *function.FunctionName, *function.LastModified)
+							functionCh <- &types.LambdaFunctionData{
+								Runtime:      runtime,
+								Region:       region,
+								FunctionName: *function.FunctionName,
+								LastModified: *function.LastModified,
+							}
 							break
 						}
 					}

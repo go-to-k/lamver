@@ -60,6 +60,7 @@ func (app *App) Run(ctx context.Context) error {
 }
 
 // TODO: refactor for nested loops
+// TODO: README
 // TODO: write app tests for regions
 // TODO: write sdk tests not using interface, otherwise use interface, go mock and auto creating test modules
 

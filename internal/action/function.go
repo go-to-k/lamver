@@ -1,4 +1,4 @@
-package app
+package action
 
 import (
 	"context"
@@ -10,17 +10,23 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (app *App) getAllRuntimeAndRegions(context context.Context) (regionList []string, runtimeList []string, err error) {
-	cfg, err := app.loadAwsConfig(context, app.DefaultRegion)
+type GetAllRegionsAndRuntimeInput struct {
+	Ctx           context.Context
+	DefaultRegion string
+	Profile       string
+}
+
+func GetAllRegionsAndRuntime(input *GetAllRegionsAndRuntimeInput) (regionList []string, runtimeList []string, err error) {
+	cfg, err := loadAwsConfig(input.Ctx, input.DefaultRegion, input.Profile)
 	if err != nil {
 		return regionList, runtimeList, err
 	}
 
-	eg, _ := errgroup.WithContext(context)
+	eg, _ := errgroup.WithContext(input.Ctx)
 
 	eg.Go(func() error {
 		ec2 := client.NewEC2Client(cfg)
-		regionList, err = ec2.DescribeRegions(context)
+		regionList, err = ec2.DescribeRegions(input.Ctx)
 		if err != nil {
 			return err
 		}
@@ -40,10 +46,18 @@ func (app *App) getAllRuntimeAndRegions(context context.Context) (regionList []s
 	return regionList, runtimeList, nil
 }
 
-func (app *App) createFunctionMap(ctx context.Context, targetRegions []string, targetRuntime []string, keyword string) (map[string]map[string][][]string, error) {
-	functionMap := make(map[string]map[string][][]string, len(targetRuntime))
+type CreateFunctionMapInput struct {
+	Ctx           context.Context
+	Profile       string
+	TargetRegions []string
+	TargetRuntime []string
+	Keyword       string
+}
 
-	eg, _ := errgroup.WithContext(ctx)
+func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][]string, error) {
+	functionMap := make(map[string]map[string][][]string, len(input.TargetRuntime))
+
+	eg, _ := errgroup.WithContext(input.Ctx)
 	wg := sync.WaitGroup{}
 	functionCh := make(chan *types.LambdaFunctionData)
 
@@ -52,16 +66,16 @@ func (app *App) createFunctionMap(ctx context.Context, targetRegions []string, t
 		defer wg.Done()
 		for f := range functionCh {
 			if _, exist := functionMap[f.Runtime]; !exist {
-				functionMap[f.Runtime] = make(map[string][][]string, len(targetRegions))
+				functionMap[f.Runtime] = make(map[string][][]string, len(input.TargetRegions))
 			}
 			functionMap[f.Runtime][f.Region] = append(functionMap[f.Runtime][f.Region], []string{f.FunctionName, f.LastModified})
 		}
 	}()
 
-	for _, region := range targetRegions {
+	for _, region := range input.TargetRegions {
 		region := region
 		eg.Go(func() error {
-			return app.putToFunctionChannelByRegion(ctx, region, targetRuntime, keyword, functionCh)
+			return putToFunctionChannelByRegion(input.Ctx, region, input.Profile, input.TargetRuntime, input.Keyword, functionCh)
 		})
 	}
 
@@ -79,14 +93,15 @@ func (app *App) createFunctionMap(ctx context.Context, targetRegions []string, t
 	return functionMap, nil
 }
 
-func (app *App) putToFunctionChannelByRegion(
+func putToFunctionChannelByRegion(
 	ctx context.Context,
 	region string,
+	profile string,
 	targetRuntime []string,
 	keyword string,
 	functionCh chan *types.LambdaFunctionData,
 ) error {
-	cfg, err := app.loadAwsConfig(ctx, region)
+	cfg, err := loadAwsConfig(ctx, region, profile)
 	if err != nil {
 		return err
 	}
@@ -117,18 +132,24 @@ func (app *App) putToFunctionChannelByRegion(
 	return nil
 }
 
-func (app *App) sortAndSetFunctionList(regionList []string, runtimeList []string, functionMap map[string]map[string][][]string) [][]string {
+type SortAndSetFunctionListInput struct {
+	RegionList  []string
+	RuntimeList []string
+	FunctionMap map[string]map[string][][]string
+}
+
+func SortAndSetFunctionList(input *SortAndSetFunctionListInput) [][]string {
 	var functionData [][]string
 
-	for _, runtime := range runtimeList {
-		if _, exist := functionMap[runtime]; !exist {
+	for _, runtime := range input.RuntimeList {
+		if _, exist := input.FunctionMap[runtime]; !exist {
 			continue
 		}
-		for _, region := range regionList {
-			if _, exist := functionMap[runtime][region]; !exist {
+		for _, region := range input.RegionList {
+			if _, exist := input.FunctionMap[runtime][region]; !exist {
 				continue
 			}
-			for _, f := range functionMap[runtime][region] {
+			for _, f := range input.FunctionMap[runtime][region] {
 				var data []string
 				data = append(data, runtime)
 				data = append(data, region)

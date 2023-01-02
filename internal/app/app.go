@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"lamver/internal/action"
 	"lamver/internal/io"
 	"lamver/internal/types"
 	"os"
@@ -51,39 +52,57 @@ func NewApp(version string) *App {
 	return &app
 }
 
-func (app *App) Run(ctx context.Context) error {
-	return app.Cli.RunContext(ctx, os.Args)
+func (a *App) Run(ctx context.Context) error {
+	return a.Cli.RunContext(ctx, os.Args)
 }
 
-func (app *App) getAction() func(c *cli.Context) error {
+func (a *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		regionList, runtimeList, err := app.getAllRuntimeAndRegions(c.Context)
+		getAllRegionsAndRuntimeInput := &action.GetAllRegionsAndRuntimeInput{
+			Ctx:           c.Context,
+			DefaultRegion: a.DefaultRegion,
+			Profile:       a.Profile,
+		}
+		allRegions, allRuntime, err := action.GetAllRegionsAndRuntime(getAllRegionsAndRuntimeInput)
 		if err != nil {
 			return err
 		}
 
 		regionsLabel := "Select regions you want to display.\n"
-		targetRegions, continuation := io.GetCheckboxes(regionsLabel, regionList)
+		targetRegions, continuation := io.GetCheckboxes(regionsLabel, allRegions)
 		if !continuation {
 			return nil
 		}
 
 		runtimeLabel := "Select runtime values you want to display.\n"
-		targetRuntime, continuation := io.GetCheckboxes(runtimeLabel, runtimeList)
+		targetRuntime, continuation := io.GetCheckboxes(runtimeLabel, allRuntime)
 		if !continuation {
 			return nil
 		}
 
 		keyword := io.InputKeywordForFilter()
 
-		functionMap, err := app.createFunctionMap(c.Context, targetRegions, targetRuntime, keyword)
+		createFunctionMapInput := &action.CreateFunctionMapInput{
+			Ctx:           c.Context,
+			Profile:       a.Profile,
+			TargetRegions: targetRegions,
+			TargetRuntime: targetRuntime,
+			Keyword:       keyword,
+		}
+		functionMap, err := action.CreateFunctionMap(createFunctionMapInput)
 		if err != nil {
 			return err
 		}
 
+		sortAndSetFunctionListInput := &action.SortAndSetFunctionListInput{
+			RegionList:  allRegions,
+			RuntimeList: allRuntime,
+			FunctionMap: functionMap,
+		}
+		functionData := action.SortAndSetFunctionList(sortAndSetFunctionListInput)
+
 		functionHeader := types.GetLambdaFunctionDataKeys()
-		functionData := app.sortAndSetFunctionList(regionList, runtimeList, functionMap)
-		if err := io.OutputResult(functionHeader, functionData, app.CSVOutputFilePath); err != nil {
+		if err := io.OutputResult(functionHeader, functionData, a.CSVOutputFilePath); err != nil {
 			return err
 		}
 

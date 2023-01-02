@@ -95,8 +95,8 @@ func (a *App) getAction() func(c *cli.Context) error {
 		}
 
 		sortAndSetFunctionListInput := &action.SortAndSetFunctionListInput{
-			RegionList:  allRegions,
-			RuntimeList: allRuntime,
+			RegionList:  targetRegions,
+			RuntimeList: targetRuntime,
 			FunctionMap: functionMap,
 		}
 		functionData := action.SortAndSetFunctionList(sortAndSetFunctionListInput)

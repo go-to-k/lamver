@@ -196,7 +196,9 @@ func (app *App) getAction() func(c *cli.Context) error {
 			}
 		}
 
-		fmt.Println(*logger.ToStringAsTableFormat(functionHeader, functionData))
+		fmt.Fprintf(os.Stderr, *logger.ToStringAsTableFormat(functionHeader, functionData))
+		fmt.Fprintf(os.Stderr, "%d counts hit! ", len(functionData))
+
 		return nil
 	}
 }

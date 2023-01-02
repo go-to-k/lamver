@@ -82,7 +82,7 @@ func (app *App) getAction() func(c *cli.Context) error {
 		}
 
 		functionHeader := types.GetLambdaFunctionDataKeys()
-		functionData := app.sortFunctionMap(regionList, runtimeList, functionMap)
+		functionData := app.sortAndSetFunctionList(regionList, runtimeList, functionMap)
 		if err := io.OutputResult(functionHeader, functionData, app.CSVOutputFilePath); err != nil {
 			return err
 		}

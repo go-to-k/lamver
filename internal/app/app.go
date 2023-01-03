@@ -59,7 +59,7 @@ func (a *App) Run(ctx context.Context) error {
 
 func (a *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		awsConfigFactory := action.NewAWSConfigFactory(a.Profile)
+		awsConfigFactory := client.NewAWSConfigFactory(a.Profile)
 		ec2Factory := client.NewEC2Factory()
 		lambdaFactory := client.NewLambdaFactory()
 

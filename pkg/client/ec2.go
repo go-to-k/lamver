@@ -4,7 +4,6 @@ import (
 	"context"
 	"sort"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -22,17 +21,11 @@ type EC2 struct {
 
 var _ EC2Client = (*EC2)(nil)
 
-func NewEC2Client(config aws.Config) *EC2 {
-	ec2Client := ec2.NewFromConfig(config, func(o *ec2.Options) {
-		o.RetryMaxAttempts = retryMaxAttempts
-		o.RetryMode = aws.RetryModeStandard
-	})
-
+func NewEC2(client EC2SDKClient) *EC2 {
 	return &EC2{
-		client: ec2Client,
+		client: client,
 	}
 }
-
 func (c *EC2) DescribeRegions(ctx context.Context) ([]string, error) {
 	outputRegions := []string{}
 	input := &ec2.DescribeRegionsInput{}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"sort"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 )
@@ -22,14 +21,9 @@ type Lambda struct {
 	client LambdaSDKClient
 }
 
-func NewLambdaClient(config aws.Config) *Lambda {
-	lambdaClient := lambda.NewFromConfig(config, func(o *lambda.Options) {
-		o.RetryMaxAttempts = retryMaxAttempts
-		o.RetryMode = aws.RetryModeStandard
-	})
-
+func NewLambda(client LambdaSDKClient) *Lambda {
 	return &Lambda{
-		client: lambdaClient,
+		client: client,
 	}
 }
 

@@ -5,13 +5,12 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 )
 
-func TestNewLambdaClient(t *testing.T) {
+func TestNewLambda(t *testing.T) {
 	type args struct {
-		config aws.Config
+		client LambdaSDKClient
 	}
 	tests := []struct {
 		name string
@@ -22,8 +21,8 @@ func TestNewLambdaClient(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewLambdaClient(tt.args.config); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewLambdaClient() = %v, want %v", got, tt.want)
+			if got := NewLambda(tt.args.client); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewLambda() = %v, want %v", got, tt.want)
 			}
 		})
 	}

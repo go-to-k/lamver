@@ -14,7 +14,10 @@ type Lambda struct {
 }
 
 func NewLambdaClient(config aws.Config) *Lambda {
-	lambdaClient := lambda.NewFromConfig(config)
+	lambdaClient := lambda.NewFromConfig(config, func(o *lambda.Options) {
+		o.RetryMaxAttempts = retryMaxAttempts
+		o.RetryMode = aws.RetryModeStandard
+	})
 
 	return &Lambda{
 		client: lambdaClient,

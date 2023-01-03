@@ -13,7 +13,10 @@ type EC2 struct {
 }
 
 func NewEC2Client(config aws.Config) *EC2 {
-	ec2Client := ec2.NewFromConfig(config)
+	ec2Client := ec2.NewFromConfig(config, func(o *ec2.Options) {
+		o.RetryMaxAttempts = retryMaxAttempts
+		o.RetryMode = aws.RetryModeStandard
+	})
 
 	return &EC2{
 		client: ec2Client,

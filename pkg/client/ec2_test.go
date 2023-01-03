@@ -70,8 +70,10 @@ func TestEC2_DescribeRegions(t *testing.T) {
 							},
 							{
 								RegionName: aws.String("us-east-1"),
-							}},
-					}, nil)
+							},
+						},
+					}, nil,
+				)
 			},
 			want: []string{
 				"ap-northeast-1",
@@ -94,7 +96,8 @@ func TestEC2_DescribeRegions(t *testing.T) {
 							{
 								RegionName: aws.String("ap-northeast-1"),
 							}},
-					}, nil)
+					}, nil,
+				)
 			},
 			want: []string{ // sort by region name
 				"ap-northeast-1",
@@ -109,7 +112,8 @@ func TestEC2_DescribeRegions(t *testing.T) {
 			},
 			prepareMockFn: func(m *MockEC2SDKClient) {
 				m.EXPECT().DescribeRegions(ctx, &ec2.DescribeRegionsInput{}).Return(
-					nil, fmt.Errorf("DescribeRegionsError"))
+					nil, fmt.Errorf("DescribeRegionsError"),
+				)
 			},
 			want:    []string{},
 			wantErr: true,

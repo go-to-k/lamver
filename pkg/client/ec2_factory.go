@@ -1,3 +1,4 @@
+//go:generate mockgen -source=./ec2_factory.go -destination=./ec2_factory_mock.go -package=client
 package client
 
 import (

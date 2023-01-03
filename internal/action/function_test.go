@@ -3,6 +3,7 @@ package action
 import (
 	"context"
 	"lamver/internal/types"
+	"lamver/pkg/client"
 	"reflect"
 	"testing"
 )
@@ -65,12 +66,13 @@ func TestCreateFunctionMap(t *testing.T) {
 
 func Test_putToFunctionChannelByRegion(t *testing.T) {
 	type args struct {
-		ctx           context.Context
-		region        string
-		profile       string
-		targetRuntime []string
-		keyword       string
-		functionCh    chan *types.LambdaFunctionData
+		ctx              context.Context
+		region           string
+		targetRuntime    []string
+		keyword          string
+		functionCh       chan *types.LambdaFunctionData
+		awsConfigFactory client.AWSConfigCreator
+		lambdaFactory    client.LambdaCreator
 	}
 	tests := []struct {
 		name    string
@@ -81,7 +83,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := putToFunctionChannelByRegion(tt.args.ctx, tt.args.region, tt.args.profile, tt.args.targetRuntime, tt.args.keyword, tt.args.functionCh); (err != nil) != tt.wantErr {
+			if err := putToFunctionChannelByRegion(tt.args.ctx, tt.args.region, tt.args.targetRuntime, tt.args.keyword, tt.args.functionCh, tt.args.awsConfigFactory, tt.args.lambdaFactory); (err != nil) != tt.wantErr {
 				t.Errorf("putToFunctionChannelByRegion() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

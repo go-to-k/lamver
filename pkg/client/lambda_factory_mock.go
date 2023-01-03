@@ -35,10 +35,10 @@ func (m *MockLambdaCreator) EXPECT() *MockLambdaCreatorMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockLambdaCreator) Create(config aws.Config) *Lambda {
+func (m *MockLambdaCreator) Create(config aws.Config) LambdaClient {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", config)
-	ret0, _ := ret[0].(*Lambda)
+	ret0, _ := ret[0].(LambdaClient)
 	return ret0
 }
 

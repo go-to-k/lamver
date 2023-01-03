@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
+	types "github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,10 +37,10 @@ func (m *MockLambdaClient) EXPECT() *MockLambdaClientMockRecorder {
 }
 
 // ListFunctions mocks base method.
-func (m *MockLambdaClient) ListFunctions(ctx context.Context) ([]string, error) {
+func (m *MockLambdaClient) ListFunctions(ctx context.Context) ([]types.FunctionConfiguration, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFunctions", ctx)
-	ret0, _ := ret[0].([]string)
+	ret0, _ := ret[0].([]types.FunctionConfiguration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

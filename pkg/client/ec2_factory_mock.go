@@ -35,10 +35,10 @@ func (m *MockEC2Creator) EXPECT() *MockEC2CreatorMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockEC2Creator) Create(config aws.Config) *EC2 {
+func (m *MockEC2Creator) Create(config aws.Config) EC2Client {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", config)
-	ret0, _ := ret[0].(*EC2)
+	ret0, _ := ret[0].(EC2Client)
 	return ret0
 }
 

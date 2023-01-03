@@ -7,7 +7,7 @@ import (
 )
 
 type LambdaCreator interface {
-	Create(config aws.Config) *Lambda
+	Create(config aws.Config) LambdaClient
 }
 
 type LambdaFactory struct{}
@@ -18,7 +18,7 @@ func NewLambdaFactory() *LambdaFactory {
 	return &LambdaFactory{}
 }
 
-func (f *LambdaFactory) Create(config aws.Config) *Lambda {
+func (f *LambdaFactory) Create(config aws.Config) LambdaClient {
 	lambdaClient := lambda.NewFromConfig(config, func(o *lambda.Options) {
 		o.RetryMaxAttempts = retryMaxAttempts
 		o.RetryMode = aws.RetryModeStandard

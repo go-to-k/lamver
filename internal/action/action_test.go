@@ -6,24 +6,96 @@ import (
 	"lamver/pkg/client"
 	"reflect"
 	"testing"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/golang/mock/gomock"
 )
 
 func TestGetAllRegionsAndRuntime(t *testing.T) {
 	type args struct {
-		input *GetAllRegionsAndRuntimeInput
+		ctx    context.Context
+		region string
 	}
+	ctx := context.Background()
+
 	tests := []struct {
-		name            string
-		args            args
-		wantRegionList  []string
-		wantRuntimeList []string
-		wantErr         bool
+		name                          string
+		args                          args
+		prepareMockAWSConfigCreatorFn func(m *client.MockAWSConfigCreator)
+		prepareMockEC2CreatorFn       func(m *client.MockEC2Creator, c *client.MockEC2Client)
+		prepareMockLambdaCreatorFn    func(m *client.MockLambdaCreator, c *client.MockLambdaClient)
+		wantRegionList                []string
+		wantRuntimeList               []string
+		wantErr                       bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "GetAllRegionsAndRuntime success",
+			args: args{
+				ctx:    ctx,
+				region: "us-east-1",
+			},
+			prepareMockAWSConfigCreatorFn: func(m *client.MockAWSConfigCreator) {
+				m.EXPECT().Create(ctx, "us-east-1").Return(
+					&client.AWSConfig{
+						Config: aws.Config{},
+					}, nil,
+				)
+			},
+			prepareMockEC2CreatorFn: func(m *client.MockEC2Creator, c *client.MockEC2Client) {
+				c.EXPECT().DescribeRegions(ctx).Return(
+					[]string{
+						"ap-northeast-1",
+						"us-east-1",
+					}, nil,
+				)
+				m.EXPECT().Create(aws.Config{}).Return(
+					c,
+				)
+			},
+			prepareMockLambdaCreatorFn: func(m *client.MockLambdaCreator, c *client.MockLambdaClient) {
+				c.EXPECT().ListRuntimeValues().Return(
+					[]string{
+						"go1.x",
+						"nodejs18.x",
+					},
+				)
+				m.EXPECT().Create(aws.Config{}).Return(
+					c,
+				)
+			},
+			wantRegionList: []string{
+				"ap-northeast-1",
+				"us-east-1",
+			},
+			wantRuntimeList: []string{
+				"go1.x",
+				"nodejs18.x",
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRegionList, gotRuntimeList, err := GetAllRegionsAndRuntime(tt.args.input)
+			ctrl := gomock.NewController(t)
+			awsConfigMock := client.NewMockAWSConfigCreator(ctrl)
+			ec2FactoryMock := client.NewMockEC2Creator(ctrl)
+			lambdaFactoryMock := client.NewMockLambdaCreator(ctrl)
+			ec2ClientMock := client.NewMockEC2Client(ctrl)
+			lambdaClientMock := client.NewMockLambdaClient(ctrl)
+
+			tt.prepareMockAWSConfigCreatorFn(awsConfigMock)
+			tt.prepareMockEC2CreatorFn(ec2FactoryMock, ec2ClientMock)
+			tt.prepareMockLambdaCreatorFn(lambdaFactoryMock, lambdaClientMock)
+
+			input := &GetAllRegionsAndRuntimeInput{
+				Ctx:              tt.args.ctx,
+				AWSConfigFactory: awsConfigMock,
+				EC2Factory:       ec2FactoryMock,
+				LambdaFactory:    lambdaFactoryMock,
+				DefaultRegion:    tt.args.region,
+			}
+
+			gotRegionList, gotRuntimeList, err := GetAllRegionsAndRuntime(input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetAllRegionsAndRuntime() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -7,7 +7,7 @@ import (
 )
 
 type EC2Creator interface {
-	Create(config aws.Config) *EC2
+	Create(config aws.Config) EC2Client
 }
 
 type EC2Factory struct{}
@@ -18,7 +18,7 @@ func NewEC2Factory() *EC2Factory {
 	return &EC2Factory{}
 }
 
-func (f *EC2Factory) Create(config aws.Config) *EC2 {
+func (f *EC2Factory) Create(config aws.Config) EC2Client {
 	ec2Client := ec2.NewFromConfig(config, func(o *ec2.Options) {
 		o.RetryMaxAttempts = retryMaxAttempts
 		o.RetryMode = aws.RetryModeStandard

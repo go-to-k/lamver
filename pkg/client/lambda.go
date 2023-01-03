@@ -10,7 +10,7 @@ import (
 )
 
 type LambdaClient interface {
-	ListFunctions(ctx context.Context) ([]string, error)
+	ListFunctions(ctx context.Context) ([]types.FunctionConfiguration, error)
 	ListRuntimeValues() []string
 }
 
@@ -22,7 +22,9 @@ type Lambda struct {
 	client LambdaSDKClient
 }
 
-func NewLambda(client LambdaSDKClient) *Lambda {
+var _ LambdaClient = (*Lambda)(nil)
+
+func NewLambda(client LambdaSDKClient) LambdaClient {
 	return &Lambda{
 		client: client,
 	}

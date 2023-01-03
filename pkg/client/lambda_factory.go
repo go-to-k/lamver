@@ -1,3 +1,4 @@
+//go:generate mockgen -source=./lambda_factory.go -destination=./lambda_factory_mock.go -package=client
 package client
 
 import (

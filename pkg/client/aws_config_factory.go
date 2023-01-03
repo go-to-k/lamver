@@ -1,3 +1,4 @@
+//go:generate mockgen -source=./aws_config_factory.go -destination=./aws_config_factory_mock.go -package=client
 package client
 
 import "context"

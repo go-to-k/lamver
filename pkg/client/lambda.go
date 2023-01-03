@@ -38,7 +38,7 @@ func (c *Lambda) ListFunctions(ctx context.Context) ([]types.FunctionConfigurati
 
 		output, err := c.client.ListFunctions(ctx, input)
 		if err != nil {
-			return nil, err
+			return outputs, err
 		}
 
 		outputs = append(outputs, output.Functions...)

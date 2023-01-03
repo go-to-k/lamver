@@ -5,7 +5,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 )
 
+type LambdaCreator interface {
+	Create(config aws.Config) *Lambda
+}
+
 type LambdaFactory struct{}
+
+var _ LambdaCreator = (*LambdaFactory)(nil)
 
 func NewLambdaFactory() *LambdaFactory {
 	return &LambdaFactory{}

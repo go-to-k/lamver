@@ -342,7 +342,39 @@ func TestSortAndSetFunctionList(t *testing.T) {
 		args args
 		want [][]string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "SortAndSetFunctionList success",
+			args: args{
+				input: &SortAndSetFunctionListInput{
+					RegionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+					RuntimeList: []string{"nodejs18.x", "nodejs"},
+					FunctionMap: map[string]map[string][][]string{
+						"nodejs": {
+							"ap-northeast-1": {
+								[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+							},
+							"us-east-1": {
+								[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+							},
+						},
+						"nodejs18.x": {
+							"ap-northeast-1": {
+								[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+							},
+							"us-east-2": {
+								[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+							},
+						},
+					},
+				},
+			},
+			want: [][]string{
+				{"nodejs18.x", "ap-northeast-1", "function3", "2022-12-22T09:47:43.728+0000"},
+				{"nodejs18.x", "us-east-2", "function3", "2022-12-22T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "function1", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "us-east-1", "function1", "2022-12-21T09:47:43.728+0000"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

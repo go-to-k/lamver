@@ -4,13 +4,11 @@ import (
 	"context"
 	"reflect"
 	"testing"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
-func TestNewEC2Client(t *testing.T) {
+func TestNewEC2(t *testing.T) {
 	type args struct {
-		config aws.Config
+		client EC2SDKClient
 	}
 	tests := []struct {
 		name string
@@ -21,8 +19,8 @@ func TestNewEC2Client(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewEC2Client(tt.args.config); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewEC2Client() = %v, want %v", got, tt.want)
+			if got := NewEC2(tt.args.client); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewEC2() = %v, want %v", got, tt.want)
 			}
 		})
 	}

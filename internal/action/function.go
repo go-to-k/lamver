@@ -11,21 +11,22 @@ import (
 )
 
 type GetAllRegionsAndRuntimeInput struct {
-	Ctx           context.Context
-	DefaultRegion string
-	Profile       string
+	Ctx              context.Context
+	AWSConfigFactory *AWSConfigFactory
+	EC2Factory       *client.EC2Factory
+	LambdaFactory    *client.LambdaFactory
+	DefaultRegion    string
 }
 
 func GetAllRegionsAndRuntime(input *GetAllRegionsAndRuntimeInput) (regionList []string, runtimeList []string, err error) {
-	cfg, err := loadAwsConfig(input.Ctx, input.DefaultRegion, input.Profile)
+	cfg, err := input.AWSConfigFactory.Create(input.Ctx, input.DefaultRegion)
 	if err != nil {
 		return regionList, runtimeList, err
 	}
 
 	eg, _ := errgroup.WithContext(input.Ctx)
-
 	eg.Go(func() error {
-		ec2 := client.CreateEC2(cfg)
+		ec2 := input.EC2Factory.Create(cfg.Config)
 		regionList, err = ec2.DescribeRegions(input.Ctx)
 		if err != nil {
 			return err
@@ -34,7 +35,7 @@ func GetAllRegionsAndRuntime(input *GetAllRegionsAndRuntimeInput) (regionList []
 	})
 
 	eg.Go(func() error {
-		lambda := client.CreateLambda(cfg)
+		lambda := input.LambdaFactory.Create(cfg.Config)
 		runtimeList = lambda.ListRuntimeValues()
 		return nil
 	})
@@ -47,11 +48,12 @@ func GetAllRegionsAndRuntime(input *GetAllRegionsAndRuntimeInput) (regionList []
 }
 
 type CreateFunctionMapInput struct {
-	Ctx           context.Context
-	Profile       string
-	TargetRegions []string
-	TargetRuntime []string
-	Keyword       string
+	Ctx              context.Context
+	TargetRegions    []string
+	TargetRuntime    []string
+	Keyword          string
+	AWSConfigFactory *AWSConfigFactory
+	LambdaFactory    *client.LambdaFactory
 }
 
 func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][]string, error) {
@@ -75,7 +77,15 @@ func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][
 	for _, region := range input.TargetRegions {
 		region := region
 		eg.Go(func() error {
-			return putToFunctionChannelByRegion(input.Ctx, region, input.Profile, input.TargetRuntime, input.Keyword, functionCh)
+			return putToFunctionChannelByRegion(
+				input.Ctx,
+				region,
+				input.TargetRuntime,
+				input.Keyword,
+				functionCh,
+				input.AWSConfigFactory,
+				input.LambdaFactory,
+			)
 		})
 	}
 
@@ -96,17 +106,18 @@ func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][
 func putToFunctionChannelByRegion(
 	ctx context.Context,
 	region string,
-	profile string,
 	targetRuntime []string,
 	keyword string,
 	functionCh chan *types.LambdaFunctionData,
+	awsConfigFactory *AWSConfigFactory,
+	lambdaFactory *client.LambdaFactory,
 ) error {
-	cfg, err := loadAwsConfig(ctx, region, profile)
+	cfg, err := awsConfigFactory.Create(ctx, region)
 	if err != nil {
 		return err
 	}
 
-	lambda := client.CreateLambda(cfg)
+	lambda := lambdaFactory.Create(cfg.Config)
 	functions, err := lambda.ListFunctions(ctx)
 	if err != nil {
 		return err

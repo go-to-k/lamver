@@ -5,6 +5,7 @@ import (
 	"lamver/internal/action"
 	"lamver/internal/io"
 	"lamver/internal/types"
+	"lamver/pkg/client"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -58,10 +59,16 @@ func (a *App) Run(ctx context.Context) error {
 
 func (a *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
+		awsConfigFactory := action.NewAWSConfigFactory(a.Profile)
+		ec2Factory := client.NewEC2Factory()
+		lambdaFactory := client.NewLambdaFactory()
+
 		getAllRegionsAndRuntimeInput := &action.GetAllRegionsAndRuntimeInput{
-			Ctx:           c.Context,
-			DefaultRegion: a.DefaultRegion,
-			Profile:       a.Profile,
+			Ctx:              c.Context,
+			AWSConfigFactory: awsConfigFactory,
+			EC2Factory:       ec2Factory,
+			LambdaFactory:    lambdaFactory,
+			DefaultRegion:    a.DefaultRegion,
 		}
 		allRegions, allRuntime, err := action.GetAllRegionsAndRuntime(getAllRegionsAndRuntimeInput)
 		if err != nil {
@@ -83,11 +90,12 @@ func (a *App) getAction() func(c *cli.Context) error {
 		keyword := io.InputKeywordForFilter()
 
 		createFunctionMapInput := &action.CreateFunctionMapInput{
-			Ctx:           c.Context,
-			Profile:       a.Profile,
-			TargetRegions: targetRegions,
-			TargetRuntime: targetRuntime,
-			Keyword:       keyword,
+			Ctx:              c.Context,
+			TargetRegions:    targetRegions,
+			TargetRuntime:    targetRuntime,
+			Keyword:          keyword,
+			AWSConfigFactory: awsConfigFactory,
+			LambdaFactory:    lambdaFactory,
 		}
 		functionMap, err := action.CreateFunctionMap(createFunctionMapInput)
 		if err != nil {

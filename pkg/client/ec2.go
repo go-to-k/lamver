@@ -8,9 +8,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
-type EC2 struct {
-	client *ec2.Client
+type EC2Client interface {
+	DescribeRegions(ctx context.Context) ([]string, error)
 }
+
+type EC2SDKClient interface {
+	DescribeRegions(ctx context.Context, params *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error)
+}
+
+type EC2 struct {
+	client EC2SDKClient
+}
+
+var _ EC2Client = (*EC2)(nil)
 
 func NewEC2Client(config aws.Config) *EC2 {
 	ec2Client := ec2.NewFromConfig(config, func(o *ec2.Options) {

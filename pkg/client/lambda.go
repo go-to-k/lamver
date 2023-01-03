@@ -9,8 +9,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 )
 
+type LambdaClient interface {
+	ListFunctions(ctx context.Context) ([]string, error)
+	ListRuntimeValues() []string
+}
+
+type LambdaSDKClient interface {
+	ListFunctions(ctx context.Context, params *lambda.ListFunctionsInput, optFns ...func(*lambda.Options)) (*lambda.ListFunctionsOutput, error)
+}
+
 type Lambda struct {
-	client *lambda.Client
+	client LambdaSDKClient
 }
 
 func NewLambdaClient(config aws.Config) *Lambda {

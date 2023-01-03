@@ -5,7 +5,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
+type EC2Creator interface {
+	Create(config aws.Config) *EC2
+}
+
 type EC2Factory struct{}
+
+var _ EC2Creator = (*EC2Factory)(nil)
 
 func NewEC2Factory() *EC2Factory {
 	return &EC2Factory{}

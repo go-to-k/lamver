@@ -12,9 +12,9 @@ import (
 
 type GetAllRegionsAndRuntimeInput struct {
 	Ctx              context.Context
-	AWSConfigFactory *AWSConfigFactory
-	EC2Factory       *client.EC2Factory
-	LambdaFactory    *client.LambdaFactory
+	AWSConfigFactory AWSConfigCreator
+	EC2Factory       client.EC2Creator
+	LambdaFactory    client.LambdaCreator
 	DefaultRegion    string
 }
 
@@ -52,8 +52,8 @@ type CreateFunctionMapInput struct {
 	TargetRegions    []string
 	TargetRuntime    []string
 	Keyword          string
-	AWSConfigFactory *AWSConfigFactory
-	LambdaFactory    *client.LambdaFactory
+	AWSConfigFactory AWSConfigCreator
+	LambdaFactory    client.LambdaCreator
 }
 
 func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][]string, error) {
@@ -109,8 +109,8 @@ func putToFunctionChannelByRegion(
 	targetRuntime []string,
 	keyword string,
 	functionCh chan *types.LambdaFunctionData,
-	awsConfigFactory *AWSConfigFactory,
-	lambdaFactory *client.LambdaFactory,
+	awsConfigFactory AWSConfigCreator,
+	lambdaFactory client.LambdaCreator,
 ) error {
 	cfg, err := awsConfigFactory.Create(ctx, region)
 	if err != nil {

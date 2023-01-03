@@ -2,9 +2,15 @@ package action
 
 import "context"
 
+type AWSConfigCreator interface {
+	Create(ctx context.Context, region string) (*AWSConfig, error)
+}
+
 type AWSConfigFactory struct {
 	Profile string
 }
+
+var _ AWSConfigCreator = (*AWSConfigFactory)(nil)
 
 func NewAWSConfigFactory(profile string) *AWSConfigFactory {
 	return &AWSConfigFactory{

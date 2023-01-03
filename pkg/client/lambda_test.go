@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
 )
 
@@ -32,7 +31,7 @@ func TestNewLambdaClient(t *testing.T) {
 
 func TestLambda_ListFunctions(t *testing.T) {
 	type fields struct {
-		client *lambda.Client
+		client LambdaSDKClient
 	}
 	type args struct {
 		ctx context.Context
@@ -65,7 +64,7 @@ func TestLambda_ListFunctions(t *testing.T) {
 
 func TestLambda_ListRuntimeValues(t *testing.T) {
 	type fields struct {
-		client *lambda.Client
+		client LambdaSDKClient
 	}
 	tests := []struct {
 		name   string

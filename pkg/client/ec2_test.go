@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 func TestNewEC2Client(t *testing.T) {
@@ -31,7 +30,7 @@ func TestNewEC2Client(t *testing.T) {
 
 func TestEC2_DescribeRegions(t *testing.T) {
 	type fields struct {
-		client *ec2.Client
+		client EC2SDKClient
 	}
 	type args struct {
 		ctx context.Context

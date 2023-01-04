@@ -108,24 +108,17 @@ func (a *App) getAction() func(c *cli.Context) error {
 
 		keyword := io.InputKeywordForFilter()
 
-		createFunctionMapInput := &action.CreateFunctionMapInput{
+		createFunctionMapInput := &action.CreateFunctionListInput{
 			Ctx:           c.Context,
 			TargetRegions: targetRegions,
 			TargetRuntime: targetRuntime,
 			Keyword:       keyword,
 			Lambda:        lambdaClient,
 		}
-		functionMap, err := action.CreateFunctionMap(createFunctionMapInput)
+		functionData, err := action.CreateFunctionList(createFunctionMapInput)
 		if err != nil {
 			return err
 		}
-
-		sortAndSetFunctionListInput := &action.SortAndSetFunctionListInput{
-			RegionList:  targetRegions,
-			RuntimeList: targetRuntime,
-			FunctionMap: functionMap,
-		}
-		functionData := action.SortAndSetFunctionList(sortAndSetFunctionListInput)
 
 		functionHeader := types.GetLambdaFunctionDataKeys()
 		if err := io.OutputResult(functionHeader, functionData, a.CSVOutputFilePath); err != nil {

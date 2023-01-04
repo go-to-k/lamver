@@ -39,7 +39,7 @@ func GetAllRegionsAndRuntime(input *GetAllRegionsAndRuntimeInput) (regionList []
 	return regionList, runtimeList, nil
 }
 
-type CreateFunctionMapInput struct {
+type CreateFunctionListInput struct {
 	Ctx           context.Context
 	TargetRegions []string
 	TargetRuntime []string
@@ -47,7 +47,7 @@ type CreateFunctionMapInput struct {
 	Lambda        client.LambdaClient
 }
 
-func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][]string, error) {
+func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 	functionMap := make(map[string]map[string][][]string, len(input.TargetRuntime))
 
 	eg, _ := errgroup.WithContext(input.Ctx)
@@ -90,7 +90,9 @@ func CreateFunctionMap(input *CreateFunctionMapInput) (map[string]map[string][][
 
 	wg.Wait() // for functionMap race
 
-	return functionMap, nil
+	sortedFunctionList := sortAndSetFunctionList(input.TargetRegions, input.TargetRuntime, functionMap)
+
+	return sortedFunctionList, nil
 }
 
 func putToFunctionChannelByRegion(
@@ -126,24 +128,18 @@ func putToFunctionChannelByRegion(
 	return nil
 }
 
-type SortAndSetFunctionListInput struct {
-	RegionList  []string
-	RuntimeList []string
-	FunctionMap map[string]map[string][][]string
-}
-
-func SortAndSetFunctionList(input *SortAndSetFunctionListInput) [][]string {
+func sortAndSetFunctionList(regionList []string, runtimeList []string, functionMap map[string]map[string][][]string) [][]string {
 	var functionData [][]string
 
-	for _, runtime := range input.RuntimeList {
-		if _, exist := input.FunctionMap[runtime]; !exist {
+	for _, runtime := range runtimeList {
+		if _, exist := functionMap[runtime]; !exist {
 			continue
 		}
-		for _, region := range input.RegionList {
-			if _, exist := input.FunctionMap[runtime][region]; !exist {
+		for _, region := range regionList {
+			if _, exist := functionMap[runtime][region]; !exist {
 				continue
 			}
-			for _, f := range input.FunctionMap[runtime][region] {
+			for _, f := range functionMap[runtime][region] {
 				var data []string
 				data = append(data, runtime)
 				data = append(data, region)

@@ -218,6 +218,167 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "ListFunctionsWithRegion with empty region success",
+			args: args{
+				ctx:    ctx,
+				region: "",
+			},
+			prepareMockFn: func(m *MockLambdaSDKClient) {
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+					&lambda.ListFunctionsOutput{
+						NextMarker: nil,
+						Functions: []types.FunctionConfiguration{
+							{
+								FunctionName: aws.String("function1"),
+								Runtime:      types.RuntimeNodejs,
+								LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+							},
+							{
+								FunctionName: aws.String("function2"),
+								Runtime:      types.RuntimeNodejs18x,
+								LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+							},
+						},
+					}, nil,
+				)
+			},
+			want: []types.FunctionConfiguration{
+				{
+					FunctionName: aws.String("function1"),
+					Runtime:      types.RuntimeNodejs,
+					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function2"),
+					Runtime:      types.RuntimeNodejs18x,
+					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ListFunctionsWithRegion with NextMarker and empty region success",
+			args: args{
+				ctx:    ctx,
+				region: "",
+			},
+			prepareMockFn: func(m *MockLambdaSDKClient) {
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+					&lambda.ListFunctionsOutput{
+						NextMarker: aws.String("NextMarker"),
+						Functions: []types.FunctionConfiguration{
+							{
+								FunctionName: aws.String("function1"),
+								Runtime:      types.RuntimeNodejs,
+								LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+							},
+							{
+								FunctionName: aws.String("function2"),
+								Runtime:      types.RuntimeNodejs18x,
+								LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+							},
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
+					&lambda.ListFunctionsOutput{
+						NextMarker: nil,
+						Functions: []types.FunctionConfiguration{
+							{
+								FunctionName: aws.String("function3"),
+								Runtime:      types.RuntimeGo1x,
+								LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
+							},
+							{
+								FunctionName: aws.String("function4"),
+								Runtime:      types.RuntimeProvidedal2,
+								LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
+							},
+						},
+					}, nil,
+				)
+			},
+			want: []types.FunctionConfiguration{
+				{
+					FunctionName: aws.String("function1"),
+					Runtime:      types.RuntimeNodejs,
+					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function2"),
+					Runtime:      types.RuntimeNodejs18x,
+					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function3"),
+					Runtime:      types.RuntimeGo1x,
+					LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function4"),
+					Runtime:      types.RuntimeProvidedal2,
+					LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ListFunctionsWithRegion with empty region fail",
+			args: args{
+				ctx:    ctx,
+				region: "",
+			},
+			prepareMockFn: func(m *MockLambdaSDKClient) {
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+					nil, fmt.Errorf("ListFunctionsError"),
+				)
+			},
+			want:    []types.FunctionConfiguration{},
+			wantErr: true,
+		},
+		{
+			name: "ListFunctionsWithRegion with NextMarker and empty region fail",
+			args: args{
+				ctx:    ctx,
+				region: "",
+			},
+			prepareMockFn: func(m *MockLambdaSDKClient) {
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+					&lambda.ListFunctionsOutput{
+						NextMarker: aws.String("NextMarker"),
+						Functions: []types.FunctionConfiguration{
+							{
+								FunctionName: aws.String("function1"),
+								Runtime:      types.RuntimeNodejs,
+								LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+							},
+							{
+								FunctionName: aws.String("function2"),
+								Runtime:      types.RuntimeNodejs18x,
+								LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+							},
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
+					nil, fmt.Errorf("ListFunctionsError"),
+				)
+			},
+			want: []types.FunctionConfiguration{
+				{
+					FunctionName: aws.String("function1"),
+					Runtime:      types.RuntimeNodejs,
+					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function2"),
+					Runtime:      types.RuntimeNodejs18x,
+					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

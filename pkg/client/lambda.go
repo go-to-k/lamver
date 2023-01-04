@@ -25,7 +25,7 @@ type Lambda struct {
 
 var _ LambdaClient = (*Lambda)(nil)
 
-func NewLambda(client LambdaSDKClient) LambdaClient {
+func NewLambda(client LambdaSDKClient) *Lambda {
 	return &Lambda{
 		client: client,
 	}

@@ -9,14 +9,10 @@ import (
 
 const DEFAULT_AWS_REGION = "us-east-1"
 
-type AWSConfig struct {
-	Config aws.Config
-}
-
-func NewAWSConfig(ctx context.Context, region string, profile string) (*AWSConfig, error) {
+func LoadAWSConfig(ctx context.Context, region string, profile string) (aws.Config, error) {
 	var (
-		err error
 		cfg aws.Config
+		err error
 	)
 
 	if profile != "" {
@@ -26,7 +22,7 @@ func NewAWSConfig(ctx context.Context, region string, profile string) (*AWSConfi
 	}
 
 	if err != nil {
-		return nil, err
+		return cfg, err
 	}
 
 	if region != "" {
@@ -36,7 +32,5 @@ func NewAWSConfig(ctx context.Context, region string, profile string) (*AWSConfi
 		cfg.Region = DEFAULT_AWS_REGION
 	}
 
-	return &AWSConfig{
-		Config: cfg,
-	}, nil
+	return cfg, nil
 }

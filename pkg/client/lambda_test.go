@@ -43,9 +43,10 @@ func TestNewLambda(t *testing.T) {
 	}
 }
 
-func TestLambda_ListFunctions(t *testing.T) {
+func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 	type args struct {
-		ctx context.Context
+		ctx    context.Context
+		region string
 	}
 	ctx := context.Background()
 
@@ -57,12 +58,13 @@ func TestLambda_ListFunctions(t *testing.T) {
 		wantErr       bool
 	}{
 		{
-			name: "ListFunctions success",
+			name: "ListFunctionsWithRegion success",
 			args: args{
-				ctx: ctx,
+				ctx:    ctx,
+				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}).Return(
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions: []types.FunctionConfiguration{
@@ -95,12 +97,13 @@ func TestLambda_ListFunctions(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "ListFunctions with NextMarker success",
+			name: "ListFunctionsWithRegion with NextMarker success",
 			args: args{
-				ctx: ctx,
+				ctx:    ctx,
+				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}).Return(
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: aws.String("NextMarker"),
 						Functions: []types.FunctionConfiguration{
@@ -117,7 +120,7 @@ func TestLambda_ListFunctions(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}).Return(
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions: []types.FunctionConfiguration{
@@ -160,12 +163,13 @@ func TestLambda_ListFunctions(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "ListFunctions fail",
+			name: "ListFunctionsWithRegion fail",
 			args: args{
-				ctx: ctx,
+				ctx:    ctx,
+				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}).Return(
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					nil, fmt.Errorf("ListFunctionsError"),
 				)
 			},
@@ -173,12 +177,13 @@ func TestLambda_ListFunctions(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "ListFunctions with NextMarker fail",
+			name: "ListFunctionsWithRegion with NextMarker fail",
 			args: args{
-				ctx: ctx,
+				ctx:    ctx,
+				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}).Return(
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: aws.String("NextMarker"),
 						Functions: []types.FunctionConfiguration{
@@ -195,7 +200,7 @@ func TestLambda_ListFunctions(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}).Return(
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
 					nil, fmt.Errorf("ListFunctionsError"),
 				)
 			},
@@ -224,13 +229,13 @@ func TestLambda_ListFunctions(t *testing.T) {
 			c := &Lambda{
 				client: mock,
 			}
-			got, err := c.ListFunctions(tt.args.ctx)
+			got, err := c.ListFunctionsWithRegion(tt.args.ctx, tt.args.region)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Lambda.ListFunctions() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Lambda.ListFunctionsWithRegion() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Lambda.ListFunctions() = %v, want %v", got, tt.want)
+				t.Errorf("Lambda.ListFunctionsWithRegion() = %v, want %v", got, tt.want)
 			}
 		})
 	}

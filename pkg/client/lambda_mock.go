@@ -51,6 +51,21 @@ func (mr *MockLambdaClientMockRecorder) ListFunctions(ctx interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFunctions", reflect.TypeOf((*MockLambdaClient)(nil).ListFunctions), ctx)
 }
 
+// ListFunctionsWithRegion mocks base method.
+func (m *MockLambdaClient) ListFunctionsWithRegion(ctx context.Context, region string) ([]types.FunctionConfiguration, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListFunctionsWithRegion", ctx, region)
+	ret0, _ := ret[0].([]types.FunctionConfiguration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListFunctionsWithRegion indicates an expected call of ListFunctionsWithRegion.
+func (mr *MockLambdaClientMockRecorder) ListFunctionsWithRegion(ctx, region interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFunctionsWithRegion", reflect.TypeOf((*MockLambdaClient)(nil).ListFunctionsWithRegion), ctx, region)
+}
+
 // ListRuntimeValues mocks base method.
 func (m *MockLambdaClient) ListRuntimeValues() []string {
 	m.ctrl.T.Helper()

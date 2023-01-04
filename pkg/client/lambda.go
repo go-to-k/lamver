@@ -11,6 +11,7 @@ import (
 
 type LambdaClient interface {
 	ListFunctions(ctx context.Context) ([]types.FunctionConfiguration, error)
+	ListFunctionsWithRegion(ctx context.Context, region string) ([]types.FunctionConfiguration, error)
 	ListRuntimeValues() []string
 }
 
@@ -31,15 +32,35 @@ func NewLambda(client LambdaSDKClient) LambdaClient {
 }
 
 func (c *Lambda) ListFunctions(ctx context.Context) ([]types.FunctionConfiguration, error) {
+	return c.ListFunctionsWithRegion(ctx, "")
+}
+
+func (c *Lambda) ListFunctionsWithRegion(ctx context.Context, region string) ([]types.FunctionConfiguration, error) {
 	var nextMarker *string
 	outputs := []types.FunctionConfiguration{}
+
+	var optFns func(*lambda.Options)
+	if region != "" {
+		optFns = func(o *lambda.Options) {
+			o.Region = region
+		}
+	}
 
 	for {
 		input := &lambda.ListFunctionsInput{
 			Marker: nextMarker,
 		}
 
-		output, err := c.client.ListFunctions(ctx, input)
+		var (
+			output *lambda.ListFunctionsOutput
+			err    error
+		)
+
+		if region == "" {
+			output, err = c.client.ListFunctions(ctx, input)
+		} else {
+			output, err = c.client.ListFunctions(ctx, input, optFns)
+		}
 		if err != nil {
 			return outputs, err
 		}

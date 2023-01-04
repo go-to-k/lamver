@@ -20,14 +20,13 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
-		name                          string
-		args                          args
-		prepareMockAWSConfigCreatorFn func(m *client.MockAWSConfigCreator)
-		prepareMockEC2CreatorFn       func(m *client.MockEC2Creator, c *client.MockEC2Client)
-		prepareMockLambdaCreatorFn    func(m *client.MockLambdaCreator, c *client.MockLambdaClient)
-		wantRegionList                []string
-		wantRuntimeList               []string
-		wantErr                       bool
+		name                      string
+		args                      args
+		prepareMockEC2ClientFn    func(m *client.MockEC2Client)
+		prepareMockLambdaClientFn func(m *client.MockLambdaClient)
+		wantRegionList            []string
+		wantRuntimeList           []string
+		wantErr                   bool
 	}{
 		{
 			name: "GetAllRegionsAndRuntime success",
@@ -35,33 +34,20 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 				ctx:    ctx,
 				region: "us-east-1",
 			},
-			prepareMockAWSConfigCreatorFn: func(m *client.MockAWSConfigCreator) {
-				m.EXPECT().Create(ctx, "us-east-1").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				)
-			},
-			prepareMockEC2CreatorFn: func(m *client.MockEC2Creator, c *client.MockEC2Client) {
-				c.EXPECT().DescribeRegions(ctx).Return(
+			prepareMockEC2ClientFn: func(m *client.MockEC2Client) {
+				m.EXPECT().DescribeRegions(ctx).Return(
 					[]string{
 						"ap-northeast-1",
 						"us-east-1",
 					}, nil,
 				)
-				m.EXPECT().Create(aws.Config{}).Return(
-					c,
-				)
 			},
-			prepareMockLambdaCreatorFn: func(m *client.MockLambdaCreator, c *client.MockLambdaClient) {
-				c.EXPECT().ListRuntimeValues().Return(
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListRuntimeValues().Return(
 					[]string{
 						"go1.x",
 						"nodejs18.x",
 					},
-				)
-				m.EXPECT().Create(aws.Config{}).Return(
-					c,
 				)
 			},
 			wantRegionList: []string{
@@ -78,22 +64,17 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
-			awsConfigMock := client.NewMockAWSConfigCreator(ctrl)
-			ec2FactoryMock := client.NewMockEC2Creator(ctrl)
-			lambdaFactoryMock := client.NewMockLambdaCreator(ctrl)
 			ec2ClientMock := client.NewMockEC2Client(ctrl)
 			lambdaClientMock := client.NewMockLambdaClient(ctrl)
 
-			tt.prepareMockAWSConfigCreatorFn(awsConfigMock)
-			tt.prepareMockEC2CreatorFn(ec2FactoryMock, ec2ClientMock)
-			tt.prepareMockLambdaCreatorFn(lambdaFactoryMock, lambdaClientMock)
+			tt.prepareMockEC2ClientFn(ec2ClientMock)
+			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
 			input := &GetAllRegionsAndRuntimeInput{
-				Ctx:              tt.args.ctx,
-				AWSConfigFactory: awsConfigMock,
-				EC2Factory:       ec2FactoryMock,
-				LambdaFactory:    lambdaFactoryMock,
-				DefaultRegion:    tt.args.region,
+				Ctx:           tt.args.ctx,
+				EC2:           ec2ClientMock,
+				Lambda:        lambdaClientMock,
+				DefaultRegion: tt.args.region,
 			}
 
 			gotRegionList, gotRuntimeList, err := GetAllRegionsAndRuntime(input)
@@ -121,12 +102,11 @@ func TestCreateFunctionMap(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
-		name                          string
-		args                          args
-		prepareMockAWSConfigCreatorFn func(m *client.MockAWSConfigCreator)
-		prepareMockLambdaCreatorFn    func(m *client.MockLambdaCreator, c *client.MockLambdaClient)
-		want                          map[string]map[string][][]string
-		wantErr                       bool
+		name                      string
+		args                      args
+		prepareMockLambdaClientFn func(m *client.MockLambdaClient)
+		want                      map[string]map[string][][]string
+		wantErr                   bool
 	}{
 		{
 			name: "CreateFunctionMap success",
@@ -136,25 +116,8 @@ func TestCreateFunctionMap(t *testing.T) {
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "",
 			},
-			prepareMockAWSConfigCreatorFn: func(m *client.MockAWSConfigCreator) {
-				m.EXPECT().Create(ctx, "ap-northeast-1").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				).AnyTimes()
-				m.EXPECT().Create(ctx, "us-east-1").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				).AnyTimes()
-				m.EXPECT().Create(ctx, "us-east-2").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				).AnyTimes()
-			},
-			prepareMockLambdaCreatorFn: func(m *client.MockLambdaCreator, c *client.MockLambdaClient) {
-				c.EXPECT().ListFunctions(ctx).Return(
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(ctx, "ap-northeast-1").Return(
 					[]lambdaTypes.FunctionConfiguration{
 						{
 							FunctionName: aws.String("function1"),
@@ -166,38 +129,52 @@ func TestCreateFunctionMap(t *testing.T) {
 							Runtime:      lambdaTypes.RuntimeGo1x,
 							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(ctx, "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
 						{
 							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(ctx, "us-east-2").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function5"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function6"),
 							Runtime:      lambdaTypes.RuntimeNodejs18x,
 							LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 						},
 					}, nil,
-				).AnyTimes()
-				m.EXPECT().Create(aws.Config{}).Return(
-					c,
-				).AnyTimes()
+				)
 			},
 			want: map[string]map[string][][]string{
+				"nodejs18.x": {
+					"us-east-2": {
+						[]string{"function6", "2022-12-22T09:47:43.728+0000"},
+					},
+				},
 				"nodejs": {
 					"ap-northeast-1": {
 						[]string{"function1", "2022-12-21T09:47:43.728+0000"},
 					},
 					"us-east-1": {
-						[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+						[]string{"function3", "2022-12-21T09:47:43.728+0000"},
 					},
 					"us-east-2": {
-						[]string{"function1", "2022-12-21T09:47:43.728+0000"},
-					},
-				},
-				"nodejs18.x": {
-					"ap-northeast-1": {
-						[]string{"function3", "2022-12-22T09:47:43.728+0000"},
-					},
-					"us-east-1": {
-						[]string{"function3", "2022-12-22T09:47:43.728+0000"},
-					},
-					"us-east-2": {
-						[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+						[]string{"function5", "2022-12-21T09:47:43.728+0000"},
 					},
 				},
 			},
@@ -207,20 +184,16 @@ func TestCreateFunctionMap(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
-			awsConfigMock := client.NewMockAWSConfigCreator(ctrl)
-			lambdaFactoryMock := client.NewMockLambdaCreator(ctrl)
 			lambdaClientMock := client.NewMockLambdaClient(ctrl)
 
-			tt.prepareMockAWSConfigCreatorFn(awsConfigMock)
-			tt.prepareMockLambdaCreatorFn(lambdaFactoryMock, lambdaClientMock)
+			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
 			input := &CreateFunctionMapInput{
-				Ctx:              tt.args.ctx,
-				TargetRegions:    tt.args.targetRegions,
-				TargetRuntime:    tt.args.targetRuntime,
-				Keyword:          tt.args.keyword,
-				AWSConfigFactory: awsConfigMock,
-				LambdaFactory:    lambdaFactoryMock,
+				Ctx:           tt.args.ctx,
+				TargetRegions: tt.args.targetRegions,
+				TargetRuntime: tt.args.targetRuntime,
+				Keyword:       tt.args.keyword,
+				Lambda:        lambdaClientMock,
 			}
 
 			got, err := CreateFunctionMap(input)
@@ -246,11 +219,10 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
-		name                          string
-		args                          args
-		prepareMockAWSConfigCreatorFn func(m *client.MockAWSConfigCreator)
-		prepareMockLambdaCreatorFn    func(m *client.MockLambdaCreator, c *client.MockLambdaClient)
-		wantErr                       bool
+		name                      string
+		args                      args
+		prepareMockLambdaClientFn func(m *client.MockLambdaClient)
+		wantErr                   bool
 	}{
 		{
 			name: "putToFunctionChannelByRegion success",
@@ -261,46 +233,21 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 				keyword:       "",
 				functionCh:    make(chan *types.LambdaFunctionData),
 			},
-			prepareMockAWSConfigCreatorFn: func(m *client.MockAWSConfigCreator) {
-				m.EXPECT().Create(ctx, "ap-northeast-1").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				).AnyTimes()
-				m.EXPECT().Create(ctx, "us-east-1").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				).AnyTimes()
-				m.EXPECT().Create(ctx, "us-east-2").Return(
-					&client.AWSConfig{
-						Config: aws.Config{},
-					}, nil,
-				).AnyTimes()
-			},
-			prepareMockLambdaCreatorFn: func(m *client.MockLambdaCreator, c *client.MockLambdaClient) {
-				c.EXPECT().ListFunctions(ctx).Return(
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(ctx, "us-east-1").Return(
 					[]lambdaTypes.FunctionConfiguration{
 						{
-							FunctionName: aws.String("function1"),
+							FunctionName: aws.String("function3"),
 							Runtime:      lambdaTypes.RuntimeNodejs,
 							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 						},
 						{
-							FunctionName: aws.String("function2"),
+							FunctionName: aws.String("function4"),
 							Runtime:      lambdaTypes.RuntimeGo1x,
 							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 						},
-						{
-							FunctionName: aws.String("function3"),
-							Runtime:      lambdaTypes.RuntimeNodejs18x,
-							LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
-						},
 					}, nil,
-				).AnyTimes()
-				m.EXPECT().Create(aws.Config{}).Return(
-					c,
-				).AnyTimes()
+				)
 			},
 			wantErr: false,
 		},
@@ -308,12 +255,9 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
-			awsConfigMock := client.NewMockAWSConfigCreator(ctrl)
-			lambdaFactoryMock := client.NewMockLambdaCreator(ctrl)
 			lambdaClientMock := client.NewMockLambdaClient(ctrl)
 
-			tt.prepareMockAWSConfigCreatorFn(awsConfigMock)
-			tt.prepareMockLambdaCreatorFn(lambdaFactoryMock, lambdaClientMock)
+			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
 			go func() {
 				for {
@@ -326,7 +270,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 				}
 			}()
 
-			if err := putToFunctionChannelByRegion(tt.args.ctx, tt.args.region, tt.args.targetRuntime, tt.args.keyword, tt.args.functionCh, awsConfigMock, lambdaFactoryMock); (err != nil) != tt.wantErr {
+			if err := putToFunctionChannelByRegion(tt.args.ctx, tt.args.region, tt.args.targetRuntime, tt.args.keyword, tt.args.functionCh, lambdaClientMock); (err != nil) != tt.wantErr {
 				t.Errorf("putToFunctionChannelByRegion() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

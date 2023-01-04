@@ -8,8 +8,13 @@ import (
 	"lamver/pkg/client"
 	"os"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/urfave/cli/v2"
 )
+
+const awsSDKRetryMaxAttempts = 3
 
 type App struct {
 	Cli               *cli.App
@@ -59,16 +64,30 @@ func (a *App) Run(ctx context.Context) error {
 
 func (a *App) getAction() func(c *cli.Context) error {
 	return func(c *cli.Context) error {
-		awsConfigFactory := client.NewAWSConfigFactory(a.Profile)
-		ec2Factory := client.NewEC2Factory()
-		lambdaFactory := client.NewLambdaFactory()
+		cfg, err := client.LoadAWSConfig(c.Context, a.DefaultRegion, a.Profile)
+		if err != nil {
+			return err
+		}
+
+		lambdaClient := client.NewLambda(
+			lambda.NewFromConfig(cfg, func(o *lambda.Options) {
+				o.RetryMaxAttempts = awsSDKRetryMaxAttempts
+				o.RetryMode = aws.RetryModeStandard
+			}),
+		)
+
+		ec2Client := client.NewEC2(
+			ec2.NewFromConfig(cfg, func(o *ec2.Options) {
+				o.RetryMaxAttempts = awsSDKRetryMaxAttempts
+				o.RetryMode = aws.RetryModeStandard
+			}),
+		)
 
 		getAllRegionsAndRuntimeInput := &action.GetAllRegionsAndRuntimeInput{
-			Ctx:              c.Context,
-			AWSConfigFactory: awsConfigFactory,
-			EC2Factory:       ec2Factory,
-			LambdaFactory:    lambdaFactory,
-			DefaultRegion:    a.DefaultRegion,
+			Ctx:           c.Context,
+			EC2:           ec2Client,
+			Lambda:        lambdaClient,
+			DefaultRegion: a.DefaultRegion,
 		}
 		allRegions, allRuntime, err := action.GetAllRegionsAndRuntime(getAllRegionsAndRuntimeInput)
 		if err != nil {
@@ -90,12 +109,11 @@ func (a *App) getAction() func(c *cli.Context) error {
 		keyword := io.InputKeywordForFilter()
 
 		createFunctionMapInput := &action.CreateFunctionMapInput{
-			Ctx:              c.Context,
-			TargetRegions:    targetRegions,
-			TargetRuntime:    targetRuntime,
-			Keyword:          keyword,
-			AWSConfigFactory: awsConfigFactory,
-			LambdaFactory:    lambdaFactory,
+			Ctx:           c.Context,
+			TargetRegions: targetRegions,
+			TargetRuntime: targetRuntime,
+			Keyword:       keyword,
+			Lambda:        lambdaClient,
 		}
 		functionMap, err := action.CreateFunctionMap(createFunctionMapInput)
 		if err != nil {

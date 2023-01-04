@@ -92,7 +92,7 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 	}
 }
 
-func TestCreateFunctionMap(t *testing.T) {
+func TestCreateFunctionList(t *testing.T) {
 	type args struct {
 		ctx           context.Context
 		targetRegions []string
@@ -105,11 +105,11 @@ func TestCreateFunctionMap(t *testing.T) {
 		name                      string
 		args                      args
 		prepareMockLambdaClientFn func(m *client.MockLambdaClient)
-		want                      map[string]map[string][][]string
+		want                      [][]string
 		wantErr                   bool
 	}{
 		{
-			name: "CreateFunctionMap success",
+			name: "CreateFunctionList success",
 			args: args{
 				ctx:           ctx,
 				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
@@ -160,23 +160,11 @@ func TestCreateFunctionMap(t *testing.T) {
 					}, nil,
 				)
 			},
-			want: map[string]map[string][][]string{
-				"nodejs18.x": {
-					"us-east-2": {
-						[]string{"function6", "2022-12-22T09:47:43.728+0000"},
-					},
-				},
-				"nodejs": {
-					"ap-northeast-1": {
-						[]string{"function1", "2022-12-21T09:47:43.728+0000"},
-					},
-					"us-east-1": {
-						[]string{"function3", "2022-12-21T09:47:43.728+0000"},
-					},
-					"us-east-2": {
-						[]string{"function5", "2022-12-21T09:47:43.728+0000"},
-					},
-				},
+			want: [][]string{
+				{"nodejs18.x", "us-east-2", "function6", "2022-12-22T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "function1", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "us-east-1", "function3", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "us-east-2", "function5", "2022-12-21T09:47:43.728+0000"},
 			},
 			wantErr: false,
 		},
@@ -188,7 +176,7 @@ func TestCreateFunctionMap(t *testing.T) {
 
 			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
-			input := &CreateFunctionMapInput{
+			input := &CreateFunctionListInput{
 				Ctx:           tt.args.ctx,
 				TargetRegions: tt.args.targetRegions,
 				TargetRuntime: tt.args.targetRuntime,
@@ -196,13 +184,13 @@ func TestCreateFunctionMap(t *testing.T) {
 				Lambda:        lambdaClientMock,
 			}
 
-			got, err := CreateFunctionMap(input)
+			got, err := CreateFunctionList(input)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("CreateFunctionMap() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("CreateFunctionList() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CreateFunctionMap() = %v, want %v", got, tt.want)
+				t.Errorf("CreateFunctionList() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -277,9 +265,11 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 	}
 }
 
-func TestSortAndSetFunctionList(t *testing.T) {
+func Test_sortAndSetFunctionList(t *testing.T) {
 	type args struct {
-		input *SortAndSetFunctionListInput
+		regionList  []string
+		runtimeList []string
+		functionMap map[string]map[string][][]string
 	}
 	tests := []struct {
 		name string
@@ -287,27 +277,25 @@ func TestSortAndSetFunctionList(t *testing.T) {
 		want [][]string
 	}{
 		{
-			name: "SortAndSetFunctionList success",
+			name: "sortAndSetFunctionList success",
 			args: args{
-				input: &SortAndSetFunctionListInput{
-					RegionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
-					RuntimeList: []string{"nodejs18.x", "nodejs"},
-					FunctionMap: map[string]map[string][][]string{
-						"nodejs": {
-							"ap-northeast-1": {
-								[]string{"function1", "2022-12-21T09:47:43.728+0000"},
-							},
-							"us-east-1": {
-								[]string{"function1", "2022-12-21T09:47:43.728+0000"},
-							},
+				regionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				runtimeList: []string{"nodejs18.x", "nodejs"},
+				functionMap: map[string]map[string][][]string{
+					"nodejs": {
+						"ap-northeast-1": {
+							[]string{"function1", "2022-12-21T09:47:43.728+0000"},
 						},
-						"nodejs18.x": {
-							"ap-northeast-1": {
-								[]string{"function3", "2022-12-22T09:47:43.728+0000"},
-							},
-							"us-east-2": {
-								[]string{"function3", "2022-12-22T09:47:43.728+0000"},
-							},
+						"us-east-1": {
+							[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+						},
+					},
+					"nodejs18.x": {
+						"ap-northeast-1": {
+							[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+						},
+						"us-east-2": {
+							[]string{"function3", "2022-12-22T09:47:43.728+0000"},
 						},
 					},
 				},
@@ -322,8 +310,8 @@ func TestSortAndSetFunctionList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SortAndSetFunctionList(tt.args.input); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SortAndSetFunctionList() = %v, want %v", got, tt.want)
+			if got := sortAndSetFunctionList(tt.args.regionList, tt.args.runtimeList, tt.args.functionMap); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("sortAndSetFunctionList() = %v, want %v", got, tt.want)
 			}
 		})
 	}

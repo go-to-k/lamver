@@ -35,7 +35,7 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 				region: "us-east-1",
 			},
 			prepareMockEC2ClientFn: func(m *client.MockEC2Client) {
-				m.EXPECT().DescribeRegions(ctx).Return(
+				m.EXPECT().DescribeRegions(gomock.Any()).Return(
 					[]string{
 						"ap-northeast-1",
 						"us-east-1",
@@ -117,7 +117,7 @@ func TestCreateFunctionList(t *testing.T) {
 				keyword:       "",
 			},
 			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
-				m.EXPECT().ListFunctionsWithRegion(ctx, "ap-northeast-1").Return(
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "ap-northeast-1").Return(
 					[]lambdaTypes.FunctionConfiguration{
 						{
 							FunctionName: aws.String("function1"),
@@ -131,7 +131,7 @@ func TestCreateFunctionList(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctionsWithRegion(ctx, "us-east-1").Return(
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
 					[]lambdaTypes.FunctionConfiguration{
 						{
 							FunctionName: aws.String("function3"),
@@ -145,7 +145,7 @@ func TestCreateFunctionList(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctionsWithRegion(ctx, "us-east-2").Return(
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-2").Return(
 					[]lambdaTypes.FunctionConfiguration{
 						{
 							FunctionName: aws.String("function5"),
@@ -222,7 +222,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 				functionCh:    make(chan *types.LambdaFunctionData),
 			},
 			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
-				m.EXPECT().ListFunctionsWithRegion(ctx, "us-east-1").Return(
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
 					[]lambdaTypes.FunctionConfiguration{
 						{
 							FunctionName: aws.String("function3"),

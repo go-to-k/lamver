@@ -115,13 +115,13 @@ func (a *App) getAction() func(c *cli.Context) error {
 			Keyword:       keyword,
 			Lambda:        lambdaClient,
 		}
-		functionData, err := action.CreateFunctionList(createFunctionListInput)
+		functionList, err := action.CreateFunctionList(createFunctionListInput)
 		if err != nil {
 			return err
 		}
 
 		functionHeader := types.GetLambdaFunctionDataKeys()
-		if err := io.OutputResult(functionHeader, functionData, a.CSVOutputFilePath); err != nil {
+		if err := io.OutputResult(functionHeader, functionList, a.CSVOutputFilePath); err != nil {
 			return err
 		}
 

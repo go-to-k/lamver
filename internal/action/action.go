@@ -18,9 +18,9 @@ type GetAllRegionsAndRuntimeInput struct {
 }
 
 func GetAllRegionsAndRuntime(input *GetAllRegionsAndRuntimeInput) (regionList []string, runtimeList []string, err error) {
-	eg, _ := errgroup.WithContext(input.Ctx)
+	eg, ctx := errgroup.WithContext(input.Ctx)
 	eg.Go(func() error {
-		regionList, err = input.EC2.DescribeRegions(input.Ctx)
+		regionList, err = input.EC2.DescribeRegions(ctx)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ type CreateFunctionListInput struct {
 func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 	functionMap := make(map[string]map[string][][]string, len(input.TargetRuntime))
 
-	eg, _ := errgroup.WithContext(input.Ctx)
+	eg, ctx := errgroup.WithContext(input.Ctx)
 	wg := sync.WaitGroup{}
 	functionCh := make(chan *types.LambdaFunctionData)
 
@@ -69,7 +69,7 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 		region := region
 		eg.Go(func() error {
 			return putToFunctionChannelByRegion(
-				input.Ctx,
+				ctx,
 				region,
 				input.TargetRuntime,
 				input.Keyword,

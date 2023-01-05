@@ -129,7 +129,7 @@ func putToFunctionChannelByRegion(
 }
 
 func sortAndSetFunctionList(regionList []string, runtimeList []string, functionMap map[string]map[string][][]string) [][]string {
-	var functionData [][]string
+	var functionList [][]string
 
 	for _, runtime := range runtimeList {
 		if _, exist := functionMap[runtime]; !exist {
@@ -144,10 +144,10 @@ func sortAndSetFunctionList(regionList []string, runtimeList []string, functionM
 				data = append(data, runtime)
 				data = append(data, region)
 				data = append(data, f...)
-				functionData = append(functionData, data)
+				functionList = append(functionList, data)
 			}
 		}
 	}
 
-	return functionData
+	return functionList
 }

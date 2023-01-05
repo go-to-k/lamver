@@ -108,14 +108,14 @@ func (a *App) getAction() func(c *cli.Context) error {
 
 		keyword := io.InputKeywordForFilter()
 
-		createFunctionMapInput := &action.CreateFunctionListInput{
+		createFunctionListInput := &action.CreateFunctionListInput{
 			Ctx:           c.Context,
 			TargetRegions: targetRegions,
 			TargetRuntime: targetRuntime,
 			Keyword:       keyword,
 			Lambda:        lambdaClient,
 		}
-		functionData, err := action.CreateFunctionList(createFunctionMapInput)
+		functionData, err := action.CreateFunctionList(createFunctionListInput)
 		if err != nil {
 			return err
 		}

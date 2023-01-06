@@ -4,9 +4,11 @@ import (
 	"context"
 	"lamver/internal/types"
 	"lamver/pkg/client"
+	"runtime"
 	"strings"
 
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/sync/semaphore"
 )
 
 type GetAllRegionsAndRuntimeInput struct {
@@ -51,10 +53,13 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 
 	eg, ctx := errgroup.WithContext(input.Ctx)
 	functionCh := make(chan *types.LambdaFunctionData)
+	sem := semaphore.NewWeighted(int64(runtime.NumCPU()))
 
 	for _, region := range input.TargetRegions {
 		region := region
+		sem.Acquire(ctx, 1)
 		eg.Go(func() error {
+			defer sem.Release(1)
 			return putToFunctionChannelByRegion(
 				ctx,
 				region,

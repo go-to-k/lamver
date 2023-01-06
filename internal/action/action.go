@@ -6,6 +6,7 @@ import (
 	"lamver/pkg/client"
 	"runtime"
 	"strings"
+	"sync"
 
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
@@ -54,6 +55,18 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 	eg, ctx := errgroup.WithContext(input.Ctx)
 	functionCh := make(chan *types.LambdaFunctionData)
 	sem := semaphore.NewWeighted(int64(runtime.NumCPU()))
+	wg := sync.WaitGroup{}
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for f := range functionCh {
+			if _, exist := functionMap[f.Runtime]; !exist {
+				functionMap[f.Runtime] = make(map[string][][]string, len(input.TargetRegions))
+			}
+			functionMap[f.Runtime][f.Region] = append(functionMap[f.Runtime][f.Region], []string{f.FunctionName, f.LastModified})
+		}
+	}()
 
 	for _, region := range input.TargetRegions {
 		region := region
@@ -76,16 +89,11 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 		close(functionCh)
 	}()
 
-	for f := range functionCh {
-		if _, exist := functionMap[f.Runtime]; !exist {
-			functionMap[f.Runtime] = make(map[string][][]string, len(input.TargetRegions))
-		}
-		functionMap[f.Runtime][f.Region] = append(functionMap[f.Runtime][f.Region], []string{f.FunctionName, f.LastModified})
-	}
-
 	if err := eg.Wait(); err != nil {
 		return nil, err
 	}
+
+	wg.Wait() // for functionMap race
 
 	sortedFunctionList := sortAndSetFunctionList(input.TargetRegions, input.TargetRuntime, functionMap)
 

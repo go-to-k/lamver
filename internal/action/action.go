@@ -70,7 +70,9 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 
 	for _, region := range input.TargetRegions {
 		region := region
-		sem.Acquire(ctx, 1)
+		if err := sem.Acquire(ctx, 1); err != nil {
+			return [][]string{}, err
+		}
 		eg.Go(func() error {
 			defer sem.Release(1)
 			return putToFunctionChannelByRegion(
@@ -90,7 +92,7 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 	}()
 
 	if err := eg.Wait(); err != nil {
-		return nil, err
+		return [][]string{}, err
 	}
 
 	wg.Wait() // for functionMap race
@@ -115,6 +117,11 @@ func putToFunctionChannelByRegion(
 
 	for _, function := range functions {
 		for _, runtime := range targetRuntime {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+			}
 			if string(function.Runtime) != runtime {
 				continue
 			}

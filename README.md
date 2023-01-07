@@ -22,20 +22,20 @@ Also this tool can support output results **as a CSV file.**
 ## Install
 
 - Homebrew
-  ```
+  ```sh
   brew install go-to-k/tap/lamver
   ```
 - Binary
   - [Releases](https://github.com/go-to-k/lamver/releases)
 - Git Clone and install(for developers)
-  ```
+  ```sh
   git clone https://github.com/go-to-k/lamver.git
   cd lamver
   make install
   ```
 
 ## How to use
-  ```
+  ```sh
   lamver [-p <profile>] [-r <default region>] [-o <output file path>]
   ```
 
@@ -145,8 +145,12 @@ INF 10 counts hit!
 - -o, --output: optional
   - Output file path for CSV format
 
-### -o: csv output file path
+### CSV output mode
 
 By default results are output as table format on the screen.
 
-If you add -o option, then results can be output as a CSV file.
+If you add `-o` option, then results can be output **as a CSV file**.
+
+```sh
+lamver -o ./result.csv
+```

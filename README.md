@@ -154,7 +154,7 @@ INF 10 counts hit!
 
 ## CSV output mode
 
-By default results are output as table format on the screen.
+By default, results are output as table format on the screen.
 
 If you add `-o` option, then results can be output **as a CSV file**.
 

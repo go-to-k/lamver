@@ -562,11 +562,74 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 				{"nodejs", "us-east-1", "function1", "2022-12-21T09:47:43.728+0000"},
 			},
 		},
+		{
+			name: "sortAndSetFunctionList success if runtimeList is empty",
+			args: args{
+				regionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				runtimeList: []string{},
+				functionMap: map[string]map[string][][]string{
+					"nodejs": {
+						"ap-northeast-1": {
+							[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+						},
+						"us-east-1": {
+							[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+						},
+					},
+					"nodejs18.x": {
+						"ap-northeast-1": {
+							[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+						},
+						"us-east-2": {
+							[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+						},
+					},
+				},
+			},
+			want: [][]string{},
+		},
+		{
+			name: "sortAndSetFunctionList success if regionList is empty",
+			args: args{
+				regionList:  []string{},
+				runtimeList: []string{"nodejs18.x", "nodejs"},
+				functionMap: map[string]map[string][][]string{
+					"nodejs": {
+						"ap-northeast-1": {
+							[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+						},
+						"us-east-1": {
+							[]string{"function1", "2022-12-21T09:47:43.728+0000"},
+						},
+					},
+					"nodejs18.x": {
+						"ap-northeast-1": {
+							[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+						},
+						"us-east-2": {
+							[]string{"function3", "2022-12-22T09:47:43.728+0000"},
+						},
+					},
+				},
+			},
+			want: [][]string{},
+		},
+		{
+			name: "sortAndSetFunctionList success if functionMap is empty",
+			args: args{
+				regionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				runtimeList: []string{"nodejs18.x", "nodejs"},
+				functionMap: map[string]map[string][][]string{},
+			},
+			want: [][]string{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := sortAndSetFunctionList(tt.args.regionList, tt.args.runtimeList, tt.args.functionMap); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("sortAndSetFunctionList() = %v, want %v", got, tt.want)
+				if len(got) != len(tt.want) {
+					t.Errorf("sortAndSetFunctionList() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}

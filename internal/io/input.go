@@ -12,9 +12,8 @@ import (
 const checkboxesPageSize = 30
 
 func GetCheckboxes(label string, opts []string) ([]string, bool) {
-	var checkboxes []string
-
 	for {
+		var checkboxes []string
 		prompt := &survey.MultiSelect{
 			Message:  label,
 			Options:  opts,

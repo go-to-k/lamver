@@ -2,6 +2,7 @@ package action
 
 import (
 	"context"
+	"fmt"
 	"lamver/internal/types"
 	"lamver/pkg/client"
 	"reflect"
@@ -59,6 +60,32 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 				"nodejs18.x",
 			},
 			wantErr: false,
+		},
+		{
+			name: "GetAllRegionsAndRuntime fail by DescribeRegions Error",
+			args: args{
+				ctx:    ctx,
+				region: "us-east-1",
+			},
+			prepareMockEC2ClientFn: func(m *client.MockEC2Client) {
+				m.EXPECT().DescribeRegions(gomock.Any()).Return(
+					[]string{}, fmt.Errorf("DescribeRegionsError"),
+				)
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListRuntimeValues().Return(
+					[]string{
+						"go1.x",
+						"nodejs18.x",
+					},
+				)
+			},
+			wantRegionList: []string{},
+			wantRuntimeList: []string{
+				"go1.x",
+				"nodejs18.x",
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {

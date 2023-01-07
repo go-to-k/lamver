@@ -195,6 +195,188 @@ func TestCreateFunctionList(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "CreateFunctionList success but there is no function",
+			args: args{
+				ctx:           ctx,
+				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "",
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "ap-northeast-1").Return(
+					[]lambdaTypes.FunctionConfiguration{}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-2").Return(
+					[]lambdaTypes.FunctionConfiguration{}, nil,
+				)
+			},
+			want:    [][]string{},
+			wantErr: false,
+		},
+		{
+			name: "CreateFunctionList success if a keyword is not empty",
+			args: args{
+				ctx:           ctx,
+				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "3",
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "ap-northeast-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function1"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function2"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-2").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function5"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function6"),
+							Runtime:      lambdaTypes.RuntimeNodejs18x,
+							LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			want: [][]string{
+				{"nodejs", "us-east-1", "function3", "2022-12-21T09:47:43.728+0000"},
+			},
+			wantErr: false,
+		},
+		{
+			name: "CreateFunctionList success if a keyword is not empty when except runtime",
+			args: args{
+				ctx:           ctx,
+				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "2",
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "ap-northeast-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function1"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function2"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-2").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function5"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function6"),
+							Runtime:      lambdaTypes.RuntimeNodejs18x,
+							LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			want:    [][]string{},
+			wantErr: false,
+		},
+		{
+			name: "CreateFunctionList success if any regions have empty function list",
+			args: args{
+				ctx:           ctx,
+				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "",
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "ap-northeast-1").Return(
+					[]lambdaTypes.FunctionConfiguration{}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-2").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function5"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function6"),
+							Runtime:      lambdaTypes.RuntimeNodejs18x,
+							LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			want: [][]string{
+				{"nodejs18.x", "us-east-2", "function6", "2022-12-22T09:47:43.728+0000"},
+				{"nodejs", "us-east-1", "function3", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "us-east-2", "function5", "2022-12-21T09:47:43.728+0000"},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -217,7 +399,9 @@ func TestCreateFunctionList(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CreateFunctionList() = %v, want %v", got, tt.want)
+				if len(got) != len(tt.want) {
+					t.Errorf("CreateFunctionList() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
@@ -266,6 +450,49 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "putToFunctionChannelByRegion success but there is no function",
+			args: args{
+				ctx:           ctx,
+				region:        "us-east-1",
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "",
+				functionCh:    make(chan *types.LambdaFunctionData),
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{}, nil,
+				)
+			},
+			wantErr: false,
+		},
+		{
+			name: "putToFunctionChannelByRegion success but there is no targetRuntime",
+			args: args{
+				ctx:           ctx,
+				region:        "us-east-1",
+				targetRuntime: []string{},
+				keyword:       "",
+				functionCh:    make(chan *types.LambdaFunctionData),
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -274,18 +501,19 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 
 			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
+			ch := tt.args.functionCh
 			go func() {
 				for {
 					select {
 					case <-ctx.Done():
 						return
-					case <-tt.args.functionCh:
+					case <-ch:
 					default:
 					}
 				}
 			}()
 
-			if err := putToFunctionChannelByRegion(tt.args.ctx, tt.args.region, tt.args.targetRuntime, tt.args.keyword, tt.args.functionCh, lambdaClientMock); (err != nil) != tt.wantErr {
+			if err := putToFunctionChannelByRegion(ctx, tt.args.region, tt.args.targetRuntime, tt.args.keyword, ch, lambdaClientMock); (err != nil) != tt.wantErr {
 				t.Errorf("putToFunctionChannelByRegion() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

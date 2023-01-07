@@ -36,10 +36,10 @@ func GetCheckboxes(label string, opts []string) ([]string, bool) {
 	}
 }
 
-func InputKeywordForFilter() string {
+func InputKeywordForFilter(label string) string {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Fprintf(os.Stderr, "Filter keywords of function names: ")
+	fmt.Fprintf(os.Stderr, "%s", label)
 	s, _ := reader.ReadString('\n')
 	fmt.Fprintln(os.Stderr)
 

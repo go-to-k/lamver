@@ -39,7 +39,7 @@ Also this tool can support output results **as a CSV file.**
   lamver [-p <profile>] [-r <default region>] [-o <output file path>]
   ```
 
-### Choose runtime values
+### Choose regions
 
 ```sh
 ❯ lamver
@@ -64,7 +64,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  us-west-2
 ```
 
-### Choose regions
+### Choose runtime values
 
 ```sh
 ? Select runtime values you want to display.

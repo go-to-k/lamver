@@ -8,7 +8,7 @@ The description in **Japanese** is available on the following blog page. -> [Blo
 
 CLI tool to display Lambda runtime values and versions.
 
-By filtering by **runtime, version, or part of the function name**, you can find a list of functions **across regions**.
+By filtering by **regions, runtime and versions, or part of the function name**, you can find a list of functions **across regions**.
 
 This will allow you can see the following.
 

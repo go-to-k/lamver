@@ -3,10 +3,11 @@ package action
 import (
 	"context"
 	"fmt"
-	"lamver/internal/types"
-	"lamver/pkg/client"
 	"reflect"
 	"testing"
+
+	"github.com/go-to-k/lamver/internal/types"
+	"github.com/go-to-k/lamver/pkg/client"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	lambdaTypes "github.com/aws/aws-sdk-go-v2/service/lambda/types"

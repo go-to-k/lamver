@@ -1,4 +1,4 @@
-module lamver
+module github.com/go-to-k/lamver
 
 go 1.18
 

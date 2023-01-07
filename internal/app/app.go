@@ -2,11 +2,12 @@ package app
 
 import (
 	"context"
-	"lamver/internal/action"
-	"lamver/internal/io"
-	"lamver/internal/types"
-	"lamver/pkg/client"
 	"os"
+
+	"github.com/go-to-k/lamver/internal/action"
+	"github.com/go-to-k/lamver/internal/io"
+	"github.com/go-to-k/lamver/internal/types"
+	"github.com/go-to-k/lamver/pkg/client"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"

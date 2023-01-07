@@ -2,11 +2,12 @@ package action
 
 import (
 	"context"
-	"lamver/internal/types"
-	"lamver/pkg/client"
 	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/go-to-k/lamver/internal/types"
+	"github.com/go-to-k/lamver/pkg/client"
 
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"

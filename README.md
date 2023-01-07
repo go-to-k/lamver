@@ -39,10 +39,26 @@ Also this tool can support output results **as a CSV file.**
   lamver [-p <profile>] [-r <default region>] [-o <output file path>]
   ```
 
-### Choose regions
+### options
+
+- -p, --profile: optional
+  - AWS profile name
+- -r, --region: optional
+  - Default AWS region
+- -o, --output: optional
+  - Output file path for CSV format
+
+## Input flow
+
+### Enter `lamver`
 
 ```sh
 ❯ lamver
+```
+
+### Choose regions
+
+```sh
 ? Select regions you want to display.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
   [x]  ap-northeast-1
@@ -136,16 +152,7 @@ Filter a keyword of function names: test-goto
 INF 10 counts hit!
 ```
 
-## options
-
-- -p, --profile: optional
-  - AWS profile name
-- -r, --region: optional
-  - Default AWS region
-- -o, --output: optional
-  - Output file path for CSV format
-
-### CSV output mode
+## CSV output mode
 
 By default results are output as table format on the screen.
 

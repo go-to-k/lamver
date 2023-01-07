@@ -106,7 +106,8 @@ func (a *App) getAction() func(c *cli.Context) error {
 			return nil
 		}
 
-		keyword := io.InputKeywordForFilter()
+		keywordLabel := "Filter keywords of function names: "
+		keyword := io.InputKeywordForFilter(keywordLabel)
 
 		createFunctionListInput := &action.CreateFunctionListInput{
 			Ctx:           c.Context,

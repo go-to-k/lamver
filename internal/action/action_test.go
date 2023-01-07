@@ -451,6 +451,60 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "putToFunctionChannelByRegion success if there is no corresponding runtime",
+			args: args{
+				ctx:           ctx,
+				region:        "us-east-1",
+				targetRuntime: []string{"nodejs18.x"},
+				keyword:       "",
+				functionCh:    make(chan *types.LambdaFunctionData),
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			wantErr: false,
+		},
+		{
+			name: "putToFunctionChannelByRegion success if there is no corresponding function matching the given region keywords",
+			args: args{
+				ctx:           ctx,
+				region:        "us-east-1",
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "any",
+				functionCh:    make(chan *types.LambdaFunctionData),
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			wantErr: false,
+		},
+		{
 			name: "putToFunctionChannelByRegion success but there is no function",
 			args: args{
 				ctx:           ctx,

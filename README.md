@@ -48,8 +48,8 @@ Also this tool can support output results **as a CSV file.**
   [x]  ap-northeast-1
   [ ]  ap-northeast-2
   [ ]  ap-northeast-3
-  [x]  ap-south-1
-> [x]  ap-southeast-1
+  [ ]  ap-south-1
+  [ ]  ap-southeast-1
   [ ]  ap-southeast-2
   [ ]  ca-central-1
   [ ]  eu-central-1
@@ -58,8 +58,8 @@ Also this tool can support output results **as a CSV file.**
   [ ]  eu-west-2
   [ ]  eu-west-3
   [ ]  sa-east-1
-  [ ]  us-east-1
-  [ ]  us-east-2
+  [x]  us-east-1
+> [x]  us-east-2
   [ ]  us-west-1
   [ ]  us-west-2
 ```
@@ -69,18 +69,18 @@ Also this tool can support output results **as a CSV file.**
 ```sh
 ? Select runtime values you want to display.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
-> [x]  dotnet6
-  [x]  dotnetcore1.0
-  [x]  dotnetcore2.0
+> [ ]  dotnet6
+  [ ]  dotnetcore1.0
+  [ ]  dotnetcore2.0
   [ ]  dotnetcore2.1
   [ ]  dotnetcore3.1
-  [ ]  go1.x
+  [x]  go1.x
   [ ]  java11
-  [x]  java8
-  [x]  java8.al2
+  [ ]  java8
+  [ ]  java8.al2
   [ ]  nodejs
   [ ]  nodejs10.x
-  [ ]  nodejs12.x
+  [x]  nodejs12.x
   [ ]  nodejs14.x
   [ ]  nodejs16.x
   [ ]  nodejs18.x
@@ -89,7 +89,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  nodejs6.10
   [ ]  nodejs8.10
   [ ]  provided
-  [ ]  provided.al2
+  [x]  provided.al2
   [ ]  python2.7
   [ ]  python3.6
   [ ]  python3.7

@@ -15,8 +15,6 @@ import (
 )
 
 func TestGetAllRegionsAndRuntime(t *testing.T) {
-	t.Parallel()
-
 	type args struct {
 		ctx    context.Context
 		region string
@@ -92,8 +90,6 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			ec2ClientMock := client.NewMockEC2Client(ctrl)
 			lambdaClientMock := client.NewMockLambdaClient(ctrl)
@@ -124,8 +120,6 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 }
 
 func TestCreateFunctionList(t *testing.T) {
-	t.Parallel()
-
 	type args struct {
 		ctx           context.Context
 		targetRegions []string
@@ -385,8 +379,6 @@ func TestCreateFunctionList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			lambdaClientMock := client.NewMockLambdaClient(ctrl)
 
@@ -413,8 +405,6 @@ func TestCreateFunctionList(t *testing.T) {
 }
 
 func Test_putToFunctionChannelByRegion(t *testing.T) {
-	t.Parallel()
-
 	type args struct {
 		ctx           context.Context
 		region        string
@@ -556,8 +546,6 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			lambdaClientMock := client.NewMockLambdaClient(ctrl)
 
@@ -584,8 +572,6 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 }
 
 func Test_sortAndSetFunctionList(t *testing.T) {
-	t.Parallel()
-
 	type args struct {
 		regionList  []string
 		runtimeList []string
@@ -691,8 +677,6 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			got := sortAndSetFunctionList(tt.args.regionList, tt.args.runtimeList, tt.args.functionMap)
 			if !reflect.DeepEqual(got, tt.want) && !(len(got) == 0 && len(tt.want) == 0) {
 				t.Errorf("sortAndSetFunctionList() = %v, want %v", got, tt.want)

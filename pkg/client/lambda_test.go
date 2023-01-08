@@ -97,6 +97,23 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "ListFunctionsWithRegion with no functions success",
+			args: args{
+				ctx:    ctx,
+				region: "us-east-1",
+			},
+			prepareMockFn: func(m *MockLambdaSDKClient) {
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+					&lambda.ListFunctionsOutput{
+						NextMarker: nil,
+						Functions:  []types.FunctionConfiguration{},
+					}, nil,
+				)
+			},
+			want:    []types.FunctionConfiguration{},
+			wantErr: false,
+		},
+		{
 			name: "ListFunctionsWithRegion with NextMarker success",
 			args: args{
 				ctx:    ctx,
@@ -255,6 +272,23 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},
 			},
+			wantErr: false,
+		},
+		{
+			name: "ListFunctionsWithRegion with no functions and empty region success",
+			args: args{
+				ctx:    ctx,
+				region: "",
+			},
+			prepareMockFn: func(m *MockLambdaSDKClient) {
+				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+					&lambda.ListFunctionsOutput{
+						NextMarker: nil,
+						Functions:  []types.FunctionConfiguration{},
+					}, nil,
+				)
+			},
+			want:    []types.FunctionConfiguration{},
 			wantErr: false,
 		},
 		{

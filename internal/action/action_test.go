@@ -399,10 +399,8 @@ func TestCreateFunctionList(t *testing.T) {
 				t.Errorf("CreateFunctionList() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				if len(got) != len(tt.want) {
-					t.Errorf("CreateFunctionList() = %v, want %v", got, tt.want)
-				}
+			if !reflect.DeepEqual(got, tt.want) && !(len(got) == 0 && len(tt.want) == 0) {
+				t.Errorf("CreateFunctionList() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -681,10 +679,9 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := sortAndSetFunctionList(tt.args.regionList, tt.args.runtimeList, tt.args.functionMap); !reflect.DeepEqual(got, tt.want) {
-				if len(got) != len(tt.want) {
-					t.Errorf("sortAndSetFunctionList() = %v, want %v", got, tt.want)
-				}
+			got := sortAndSetFunctionList(tt.args.regionList, tt.args.runtimeList, tt.args.functionMap)
+			if !reflect.DeepEqual(got, tt.want) && !(len(got) == 0 && len(tt.want) == 0) {
+				t.Errorf("sortAndSetFunctionList() = %v, want %v", got, tt.want)
 			}
 		})
 	}

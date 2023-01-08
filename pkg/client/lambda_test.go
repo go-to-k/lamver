@@ -13,6 +13,8 @@ import (
 )
 
 func TestNewLambda(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		client LambdaSDKClient
 	}
@@ -36,6 +38,8 @@ func TestNewLambda(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := NewLambda(tt.args.client); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewLambda() = %v, want %v", got, tt.want)
 			}
@@ -44,6 +48,8 @@ func TestNewLambda(t *testing.T) {
 }
 
 func TestLambda_ListFunctionsWithRegion(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		ctx    context.Context
 		region string
@@ -414,6 +420,8 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctrl := gomock.NewController(t)
 			mock := NewMockLambdaSDKClient(ctrl)
 
@@ -435,6 +443,8 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 }
 
 func TestLambda_ListRuntimeValues(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		client LambdaSDKClient
 	}
@@ -485,6 +495,8 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			c := &Lambda{
 				client: tt.fields.client,
 			}

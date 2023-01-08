@@ -13,8 +13,6 @@ import (
 )
 
 func TestNewEC2(t *testing.T) {
-	t.Parallel()
-
 	type args struct {
 		client EC2SDKClient
 	}
@@ -38,8 +36,6 @@ func TestNewEC2(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			if got := NewEC2(tt.args.client); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewEC2() = %v, want %v", got, tt.want)
 			}
@@ -48,8 +44,6 @@ func TestNewEC2(t *testing.T) {
 }
 
 func TestEC2_DescribeRegions(t *testing.T) {
-	t.Parallel()
-
 	type args struct {
 		ctx context.Context
 	}
@@ -125,8 +119,6 @@ func TestEC2_DescribeRegions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			ctrl := gomock.NewController(t)
 			mock := NewMockEC2SDKClient(ctrl)
 

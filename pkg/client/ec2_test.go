@@ -47,8 +47,6 @@ func TestEC2_DescribeRegions(t *testing.T) {
 	type args struct {
 		ctx context.Context
 	}
-	ctx := context.Background()
-
 	tests := []struct {
 		name          string
 		args          args
@@ -59,10 +57,10 @@ func TestEC2_DescribeRegions(t *testing.T) {
 		{
 			name: "DescribeRegions success",
 			args: args{
-				ctx: ctx,
+				ctx: context.Background(),
 			},
 			prepareMockFn: func(m *MockEC2SDKClient) {
-				m.EXPECT().DescribeRegions(ctx, &ec2.DescribeRegionsInput{}).Return(
+				m.EXPECT().DescribeRegions(gomock.Any(), &ec2.DescribeRegionsInput{}).Return(
 					&ec2.DescribeRegionsOutput{
 						Regions: []types.Region{
 							{
@@ -84,10 +82,10 @@ func TestEC2_DescribeRegions(t *testing.T) {
 		{
 			name: "DescribeRegions sorted success",
 			args: args{
-				ctx: ctx,
+				ctx: context.Background(),
 			},
 			prepareMockFn: func(m *MockEC2SDKClient) {
-				m.EXPECT().DescribeRegions(ctx, &ec2.DescribeRegionsInput{}).Return(
+				m.EXPECT().DescribeRegions(gomock.Any(), &ec2.DescribeRegionsInput{}).Return(
 					&ec2.DescribeRegionsOutput{
 						Regions: []types.Region{
 							{
@@ -108,10 +106,10 @@ func TestEC2_DescribeRegions(t *testing.T) {
 		{
 			name: "DescribeRegions fail",
 			args: args{
-				ctx: ctx,
+				ctx: context.Background(),
 			},
 			prepareMockFn: func(m *MockEC2SDKClient) {
-				m.EXPECT().DescribeRegions(ctx, &ec2.DescribeRegionsInput{}).Return(
+				m.EXPECT().DescribeRegions(gomock.Any(), &ec2.DescribeRegionsInput{}).Return(
 					nil, fmt.Errorf("DescribeRegionsError"),
 				)
 			},

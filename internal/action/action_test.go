@@ -19,7 +19,6 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 		ctx    context.Context
 		region string
 	}
-	ctx := context.Background()
 
 	tests := []struct {
 		name                      string
@@ -33,7 +32,7 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 		{
 			name: "GetAllRegionsAndRuntime success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockEC2ClientFn: func(m *client.MockEC2Client) {
@@ -65,7 +64,7 @@ func TestGetAllRegionsAndRuntime(t *testing.T) {
 		{
 			name: "GetAllRegionsAndRuntime fail by DescribeRegions Error",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockEC2ClientFn: func(m *client.MockEC2Client) {
@@ -127,7 +126,6 @@ func TestCreateFunctionList(t *testing.T) {
 		targetRuntime []string
 		keyword       string
 	}
-	ctx := context.Background()
 
 	tests := []struct {
 		name                      string
@@ -139,7 +137,7 @@ func TestCreateFunctionList(t *testing.T) {
 		{
 			name: "CreateFunctionList success",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "",
@@ -199,7 +197,7 @@ func TestCreateFunctionList(t *testing.T) {
 		{
 			name: "CreateFunctionList success but there is no function",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "",
@@ -221,7 +219,7 @@ func TestCreateFunctionList(t *testing.T) {
 		{
 			name: "CreateFunctionList success if a keyword is not empty",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "3",
@@ -278,7 +276,7 @@ func TestCreateFunctionList(t *testing.T) {
 		{
 			name: "CreateFunctionList success if a keyword is not empty when except runtime",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "2",
@@ -333,7 +331,7 @@ func TestCreateFunctionList(t *testing.T) {
 		{
 			name: "CreateFunctionList success if any regions have empty function list",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				targetRegions: []string{"ap-northeast-1", "us-east-1", "us-east-2"},
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "",
@@ -414,7 +412,6 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		keyword       string
 		functionCh    chan *types.LambdaFunctionData
 	}
-	ctx := context.Background()
 
 	tests := []struct {
 		name                      string
@@ -425,7 +422,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		{
 			name: "putToFunctionChannelByRegion success",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				region:        "us-east-1",
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "",
@@ -452,7 +449,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		{
 			name: "putToFunctionChannelByRegion success if there is no corresponding runtime",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				region:        "us-east-1",
 				targetRuntime: []string{"nodejs18.x"},
 				keyword:       "",
@@ -479,7 +476,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		{
 			name: "putToFunctionChannelByRegion success if there is no corresponding function matching the given region keywords",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				region:        "us-east-1",
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "any",
@@ -506,7 +503,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		{
 			name: "putToFunctionChannelByRegion success but there is no function",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				region:        "us-east-1",
 				targetRuntime: []string{"nodejs18.x", "nodejs"},
 				keyword:       "",
@@ -522,7 +519,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		{
 			name: "putToFunctionChannelByRegion success but there is no targetRuntime",
 			args: args{
-				ctx:           ctx,
+				ctx:           context.Background(),
 				region:        "us-east-1",
 				targetRuntime: []string{},
 				keyword:       "",
@@ -554,6 +551,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 
 			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
+			ctx := tt.args.ctx
 			ch := tt.args.functionCh
 			go func() {
 				for {

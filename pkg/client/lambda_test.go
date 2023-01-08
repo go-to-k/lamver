@@ -48,8 +48,6 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		ctx    context.Context
 		region string
 	}
-	ctx := context.Background()
-
 	tests := []struct {
 		name          string
 		args          args
@@ -60,11 +58,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions: []types.FunctionConfiguration{
@@ -99,11 +97,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with no functions success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions:  []types.FunctionConfiguration{},
@@ -116,11 +114,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with NextMarker success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: aws.String("NextMarker"),
 						Functions: []types.FunctionConfiguration{
@@ -137,7 +135,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions: []types.FunctionConfiguration{
@@ -182,11 +180,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion fail",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					nil, fmt.Errorf("ListFunctionsError"),
 				)
 			},
@@ -196,11 +194,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with NextMarker fail",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "us-east-1",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: aws.String("NextMarker"),
 						Functions: []types.FunctionConfiguration{
@@ -217,7 +215,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
 					nil, fmt.Errorf("ListFunctionsError"),
 				)
 			},
@@ -238,11 +236,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with empty region success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions: []types.FunctionConfiguration{
@@ -277,11 +275,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with no functions and empty region success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions:  []types.FunctionConfiguration{},
@@ -294,11 +292,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with NextMarker and empty region success",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: aws.String("NextMarker"),
 						Functions: []types.FunctionConfiguration{
@@ -315,7 +313,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: nil,
 						Functions: []types.FunctionConfiguration{
@@ -360,11 +358,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with empty region fail",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					nil, fmt.Errorf("ListFunctionsError"),
 				)
 			},
@@ -374,11 +372,11 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 		{
 			name: "ListFunctionsWithRegion with NextMarker and empty region fail",
 			args: args{
-				ctx:    ctx,
+				ctx:    context.Background(),
 				region: "",
 			},
 			prepareMockFn: func(m *MockLambdaSDKClient) {
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: nil}, gomock.Any()).Return(
 					&lambda.ListFunctionsOutput{
 						NextMarker: aws.String("NextMarker"),
 						Functions: []types.FunctionConfiguration{
@@ -395,7 +393,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						},
 					}, nil,
 				)
-				m.EXPECT().ListFunctions(ctx, &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
+				m.EXPECT().ListFunctions(gomock.Any(), &lambda.ListFunctionsInput{Marker: aws.String("NextMarker")}, gomock.Any()).Return(
 					nil, fmt.Errorf("ListFunctionsError"),
 				)
 			},

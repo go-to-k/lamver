@@ -45,6 +45,7 @@ Also this tool can support output results **as a CSV file.**
   - AWS profile name
 - -r, --region: optional
   - Default AWS region
+    - The region to output is selected interactively and does not need to be specified.
 - -o, --output: optional
   - Output file path for CSV format
 

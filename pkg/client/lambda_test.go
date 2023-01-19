@@ -13,9 +13,7 @@ import (
 	"github.com/aws/smithy-go/middleware"
 )
 
-type NextMarker string
-
-var marker NextMarker = "NextMarker"
+type nextMarkerKey struct{}
 
 func getNextMarkerForInitialize(
 	ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler,
@@ -24,7 +22,7 @@ func getNextMarkerForInitialize(
 ) {
 	switch v := in.Parameters.(type) {
 	case *lambda.ListFunctionsInput:
-		ctx = context.WithValue(ctx, marker, v.Marker)
+		ctx = middleware.WithStackValue(ctx, nextMarkerKey{}, v.Marker)
 	}
 	return next.HandleInitialize(ctx, in)
 }
@@ -133,7 +131,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNoFunctionsAndNextMarkerMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := ctx.Value(marker).(*string)
+								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
 
 								var returnNextMarker *string
 								var returnFunctions []types.FunctionConfiguration
@@ -250,7 +248,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNoFunctionsAndNextMarkerMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := ctx.Value(marker).(*string)
+								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
 
 								var returnNextMarker *string
 								var returnFunctions []types.FunctionConfiguration
@@ -392,7 +390,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNextMarkerAndEmptyRegionMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := ctx.Value(marker).(*string)
+								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
 
 								var returnNextMarker *string
 								var returnFunctions []types.FunctionConfiguration
@@ -512,7 +510,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNextMarkerAndEmptyRegionErrorMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := ctx.Value(marker).(*string)
+								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
 
 								var returnNextMarker *string
 								var returnFunctions []types.FunctionConfiguration

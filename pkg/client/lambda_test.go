@@ -129,7 +129,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 
 					err = stack.Finalize.Add(
 						middleware.FinalizeMiddlewareFunc(
-							"ListFunctionsWithNoFunctionsAndNextMarkerMock",
+							"ListFunctionsWithNextMarkerMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
 								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
 
@@ -246,7 +246,7 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 
 					err = stack.Finalize.Add(
 						middleware.FinalizeMiddlewareFunc(
-							"ListFunctionsWithNoFunctionsAndNextMarkerMock",
+							"ListFunctionsWithNextMarkerErrorMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
 								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
 

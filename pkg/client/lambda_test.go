@@ -97,63 +97,106 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			want:    []types.FunctionConfiguration{},
 			wantErr: false,
 		},
-		// {
-		// 	name: "ListFunctionsWithRegion with NextMarker success",
-		// 	args: args{
-		// 		ctx:    context.Background(),
-		// 		region: "us-east-1",
-		// 		withAPIOptionsFunc: func(stack *middleware.Stack) error {
-		// 			return stack.Finalize.Add(
-		// 				middleware.FinalizeMiddlewareFunc(
-		// 					"ListFunctionsWithNoFunctionsMock",
-		// 					func(context.Context, middleware.FinalizeInput, middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-		// 						return middleware.FinalizeOutput{
-		// 							Result: &lambda.ListFunctionsOutput{
-		// 								NextMarker: aws.String("NextMarker"),
-		// 								Functions: []types.FunctionConfiguration{
-		// 									{
-		// 										FunctionName: aws.String("function1"),
-		// 										Runtime:      types.RuntimeNodejs,
-		// 										LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
-		// 									},
-		// 									{
-		// 										FunctionName: aws.String("function2"),
-		// 										Runtime:      types.RuntimeNodejs18x,
-		// 										LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
-		// 									},
-		// 								},
-		// 							},
-		// 						}, middleware.Metadata{}, nil
-		// 					},
-		// 				),
-		// 				middleware.Before,
-		// 			)
-		// 		},
-		// 	},
-		// 	want: []types.FunctionConfiguration{
-		// 		{
-		// 			FunctionName: aws.String("function1"),
-		// 			Runtime:      types.RuntimeNodejs,
-		// 			LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
-		// 		},
-		// 		{
-		// 			FunctionName: aws.String("function2"),
-		// 			Runtime:      types.RuntimeNodejs18x,
-		// 			LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
-		// 		},
-		// 		{
-		// 			FunctionName: aws.String("function3"),
-		// 			Runtime:      types.RuntimeGo1x,
-		// 			LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
-		// 		},
-		// 		{
-		// 			FunctionName: aws.String("function4"),
-		// 			Runtime:      types.RuntimeProvidedal2,
-		// 			LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
-		// 		},
-		// 	},
-		// 	wantErr: false,
-		// },
+		{
+			name: "ListFunctionsWithRegion with NextMarker success",
+			args: args{
+				ctx:    context.Background(),
+				region: "us-east-1",
+				withAPIOptionsFunc: func(stack *middleware.Stack) error {
+					type NextMarker string
+					var marker NextMarker = "NextMarker"
+
+					err := stack.Initialize.Add(
+						middleware.InitializeMiddlewareFunc(
+							"GetNextMarkerFromListFunctionsInput", func(
+								ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler,
+							) (
+								out middleware.InitializeOutput, metadata middleware.Metadata, err error,
+							) {
+								switch v := in.Parameters.(type) {
+								case *lambda.ListFunctionsInput:
+									ctx = context.WithValue(ctx, marker, v.Marker)
+								}
+								return next.HandleInitialize(ctx, in)
+							}), middleware.Before)
+					if err != nil {
+						return err
+					}
+
+					err = stack.Finalize.Add(
+						middleware.FinalizeMiddlewareFunc(
+							"ListFunctionsWithNoFunctionsAndNextMarkerMock",
+							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
+								nextMarker := ctx.Value(marker).(*string)
+
+								var returnNextMarker *string
+								var returnFunctions []types.FunctionConfiguration
+								if nextMarker == nil {
+									returnNextMarker = aws.String("NextMarker")
+									returnFunctions = []types.FunctionConfiguration{
+										{
+											FunctionName: aws.String("function1"),
+											Runtime:      types.RuntimeNodejs,
+											LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+										},
+										{
+											FunctionName: aws.String("function2"),
+											Runtime:      types.RuntimeNodejs18x,
+											LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+										},
+									}
+								} else {
+									returnFunctions = []types.FunctionConfiguration{
+										{
+											FunctionName: aws.String("function3"),
+											Runtime:      types.RuntimeGo1x,
+											LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
+										},
+										{
+											FunctionName: aws.String("function4"),
+											Runtime:      types.RuntimeProvidedal2,
+											LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
+										},
+									}
+								}
+
+								return middleware.FinalizeOutput{
+									Result: &lambda.ListFunctionsOutput{
+										NextMarker: returnNextMarker,
+										Functions:  returnFunctions,
+									},
+								}, middleware.Metadata{}, nil
+							},
+						),
+						middleware.Before,
+					)
+					return err
+				},
+			},
+			want: []types.FunctionConfiguration{
+				{
+					FunctionName: aws.String("function1"),
+					Runtime:      types.RuntimeNodejs,
+					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function2"),
+					Runtime:      types.RuntimeNodejs18x,
+					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function3"),
+					Runtime:      types.RuntimeGo1x,
+					LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
+				},
+				{
+					FunctionName: aws.String("function4"),
+					Runtime:      types.RuntimeProvidedal2,
+					LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
+				},
+			},
+			wantErr: false,
+		},
 		{
 			name: "ListFunctionsWithRegion fail",
 			args: args{

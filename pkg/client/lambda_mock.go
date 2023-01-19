@@ -8,7 +8,6 @@ import (
 	context "context"
 	reflect "reflect"
 
-	lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
 	types "github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -78,47 +77,4 @@ func (m *MockLambdaClient) ListRuntimeValues() []string {
 func (mr *MockLambdaClientMockRecorder) ListRuntimeValues() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListRuntimeValues", reflect.TypeOf((*MockLambdaClient)(nil).ListRuntimeValues))
-}
-
-// MockLambdaSDKClient is a mock of LambdaSDKClient interface.
-type MockLambdaSDKClient struct {
-	ctrl     *gomock.Controller
-	recorder *MockLambdaSDKClientMockRecorder
-}
-
-// MockLambdaSDKClientMockRecorder is the mock recorder for MockLambdaSDKClient.
-type MockLambdaSDKClientMockRecorder struct {
-	mock *MockLambdaSDKClient
-}
-
-// NewMockLambdaSDKClient creates a new mock instance.
-func NewMockLambdaSDKClient(ctrl *gomock.Controller) *MockLambdaSDKClient {
-	mock := &MockLambdaSDKClient{ctrl: ctrl}
-	mock.recorder = &MockLambdaSDKClientMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockLambdaSDKClient) EXPECT() *MockLambdaSDKClientMockRecorder {
-	return m.recorder
-}
-
-// ListFunctions mocks base method.
-func (m *MockLambdaSDKClient) ListFunctions(ctx context.Context, params *lambda.ListFunctionsInput, optFns ...func(*lambda.Options)) (*lambda.ListFunctionsOutput, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx, params}
-	for _, a := range optFns {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "ListFunctions", varargs...)
-	ret0, _ := ret[0].(*lambda.ListFunctionsOutput)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ListFunctions indicates an expected call of ListFunctions.
-func (mr *MockLambdaSDKClientMockRecorder) ListFunctions(ctx, params interface{}, optFns ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx, params}, optFns...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFunctions", reflect.TypeOf((*MockLambdaSDKClient)(nil).ListFunctions), varargs...)
 }

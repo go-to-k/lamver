@@ -15,17 +15,13 @@ type LambdaClient interface {
 	ListRuntimeValues() []string
 }
 
-type LambdaSDKClient interface {
-	ListFunctions(ctx context.Context, params *lambda.ListFunctionsInput, optFns ...func(*lambda.Options)) (*lambda.ListFunctionsOutput, error)
-}
-
 type Lambda struct {
-	client LambdaSDKClient
+	client *lambda.Client
 }
 
 var _ LambdaClient = (*Lambda)(nil)
 
-func NewLambda(client LambdaSDKClient) *Lambda {
+func NewLambda(client *lambda.Client) *Lambda {
 	return &Lambda{
 		client: client,
 	}

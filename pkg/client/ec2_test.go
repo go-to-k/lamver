@@ -7,71 +7,49 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-	"github.com/golang/mock/gomock"
+	"github.com/aws/smithy-go/middleware"
 )
-
-func TestNewEC2(t *testing.T) {
-	type args struct {
-		client EC2SDKClient
-	}
-	ctrl := gomock.NewController(t)
-	mock := NewMockEC2SDKClient(ctrl)
-
-	tests := []struct {
-		name string
-		args args
-		want *EC2
-	}{
-		{
-			name: "NewEC2",
-			args: args{
-				client: mock,
-			},
-			want: &EC2{
-				client: mock,
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewEC2(tt.args.client); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewEC2() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestEC2_DescribeRegions(t *testing.T) {
 	type args struct {
-		ctx context.Context
+		ctx                context.Context
+		withAPIOptionsFunc func(*middleware.Stack) error
 	}
 	tests := []struct {
-		name          string
-		args          args
-		prepareMockFn func(m *MockEC2SDKClient)
-		want          []string
-		wantErr       bool
+		name    string
+		args    args
+		want    []string
+		wantErr bool
 	}{
 		{
 			name: "DescribeRegions success",
 			args: args{
 				ctx: context.Background(),
-			},
-			prepareMockFn: func(m *MockEC2SDKClient) {
-				m.EXPECT().DescribeRegions(gomock.Any(), &ec2.DescribeRegionsInput{}).Return(
-					&ec2.DescribeRegionsOutput{
-						Regions: []types.Region{
-							{
-								RegionName: aws.String("ap-northeast-1"),
+				withAPIOptionsFunc: func(stack *middleware.Stack) error {
+					return stack.Finalize.Add(
+						middleware.FinalizeMiddlewareFunc(
+							"DescribeRegionsMock",
+							func(context.Context, middleware.FinalizeInput, middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
+								return middleware.FinalizeOutput{
+									Result: &ec2.DescribeRegionsOutput{
+										Regions: []types.Region{
+											{
+												RegionName: aws.String("ap-northeast-1"),
+											},
+											{
+												RegionName: aws.String("us-east-1"),
+											},
+										},
+									},
+								}, middleware.Metadata{}, nil
 							},
-							{
-								RegionName: aws.String("us-east-1"),
-							},
-						},
-					}, nil,
-				)
+						),
+						middleware.Before,
+					)
+				},
 			},
 			want: []string{
 				"ap-northeast-1",
@@ -83,19 +61,28 @@ func TestEC2_DescribeRegions(t *testing.T) {
 			name: "DescribeRegions sorted success",
 			args: args{
 				ctx: context.Background(),
-			},
-			prepareMockFn: func(m *MockEC2SDKClient) {
-				m.EXPECT().DescribeRegions(gomock.Any(), &ec2.DescribeRegionsInput{}).Return(
-					&ec2.DescribeRegionsOutput{
-						Regions: []types.Region{
-							{
-								RegionName: aws.String("us-east-1"),
+				withAPIOptionsFunc: func(stack *middleware.Stack) error {
+					return stack.Finalize.Add(
+						middleware.FinalizeMiddlewareFunc(
+							"DescribeRegionsUnSortedMock",
+							func(context.Context, middleware.FinalizeInput, middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
+								return middleware.FinalizeOutput{
+									Result: &ec2.DescribeRegionsOutput{
+										Regions: []types.Region{
+											{
+												RegionName: aws.String("us-east-1"),
+											},
+											{
+												RegionName: aws.String("ap-northeast-1"),
+											},
+										},
+									},
+								}, middleware.Metadata{}, nil
 							},
-							{
-								RegionName: aws.String("ap-northeast-1"),
-							}},
-					}, nil,
-				)
+						),
+						middleware.Before,
+					)
+				},
 			},
 			want: []string{ // sort by region name
 				"ap-northeast-1",
@@ -107,11 +94,19 @@ func TestEC2_DescribeRegions(t *testing.T) {
 			name: "DescribeRegions fail",
 			args: args{
 				ctx: context.Background(),
-			},
-			prepareMockFn: func(m *MockEC2SDKClient) {
-				m.EXPECT().DescribeRegions(gomock.Any(), &ec2.DescribeRegionsInput{}).Return(
-					nil, fmt.Errorf("DescribeRegionsError"),
-				)
+				withAPIOptionsFunc: func(stack *middleware.Stack) error {
+					return stack.Finalize.Add(
+						middleware.FinalizeMiddlewareFunc(
+							"DescribeRegionsErrorMock",
+							func(context.Context, middleware.FinalizeInput, middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
+								return middleware.FinalizeOutput{
+									Result: &ec2.DescribeRegionsOutput{},
+								}, middleware.Metadata{}, fmt.Errorf("DescribeRegionsError")
+							},
+						),
+						middleware.Before,
+					)
+				},
 			},
 			want:    []string{},
 			wantErr: true,
@@ -119,15 +114,19 @@ func TestEC2_DescribeRegions(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ctrl := gomock.NewController(t)
-			mock := NewMockEC2SDKClient(ctrl)
-
-			tt.prepareMockFn(mock)
-
-			c := &EC2{
-				client: mock,
+			cfg, err := config.LoadDefaultConfig(
+				tt.args.ctx,
+				config.WithRegion("ap-northeast-1"),
+				config.WithAPIOptions([]func(*middleware.Stack) error{tt.args.withAPIOptionsFunc}),
+			)
+			if err != nil {
+				t.Fatal(err)
 			}
-			got, err := c.DescribeRegions(tt.args.ctx)
+
+			client := ec2.NewFromConfig(cfg)
+			ec2Client := NewEC2(client)
+
+			got, err := ec2Client.DescribeRegions(tt.args.ctx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("EC2.DescribeRegions() error = %v, wantErr %v", err, tt.wantErr)
 				return

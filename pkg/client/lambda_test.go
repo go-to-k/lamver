@@ -13,7 +13,7 @@ import (
 	"github.com/aws/smithy-go/middleware"
 )
 
-type nextMarkerKey struct{}
+type markerKey struct{}
 
 func getNextMarkerForInitialize(
 	ctx context.Context, in middleware.InitializeInput, next middleware.InitializeHandler,
@@ -22,7 +22,7 @@ func getNextMarkerForInitialize(
 ) {
 	switch v := in.Parameters.(type) {
 	case *lambda.ListFunctionsInput:
-		ctx = middleware.WithStackValue(ctx, nextMarkerKey{}, v.Marker)
+		ctx = middleware.WithStackValue(ctx, markerKey{}, v.Marker)
 	}
 	return next.HandleInitialize(ctx, in)
 }
@@ -131,13 +131,13 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNextMarkerMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
+								marker := middleware.GetStackValue(ctx, markerKey{}).(*string)
 
-								var returnNextMarker *string
-								var returnFunctions []types.FunctionConfiguration
-								if nextMarker == nil {
-									returnNextMarker = aws.String("NextMarker")
-									returnFunctions = []types.FunctionConfiguration{
+								var nextMarker *string
+								var functions []types.FunctionConfiguration
+								if marker == nil {
+									nextMarker = aws.String("NextMarker")
+									functions = []types.FunctionConfiguration{
 										{
 											FunctionName: aws.String("function1"),
 											Runtime:      types.RuntimeNodejs,
@@ -151,12 +151,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									}
 									return middleware.FinalizeOutput{
 										Result: &lambda.ListFunctionsOutput{
-											NextMarker: returnNextMarker,
-											Functions:  returnFunctions,
+											NextMarker: nextMarker,
+											Functions:  functions,
 										},
 									}, middleware.Metadata{}, nil
 								} else {
-									returnFunctions = []types.FunctionConfiguration{
+									functions = []types.FunctionConfiguration{
 										{
 											FunctionName: aws.String("function3"),
 											Runtime:      types.RuntimeGo1x,
@@ -170,8 +170,8 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									}
 									return middleware.FinalizeOutput{
 										Result: &lambda.ListFunctionsOutput{
-											NextMarker: returnNextMarker,
-											Functions:  returnFunctions,
+											NextMarker: nextMarker,
+											Functions:  functions,
 										},
 									}, middleware.Metadata{}, nil
 								}
@@ -248,13 +248,13 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNextMarkerErrorMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
+								marker := middleware.GetStackValue(ctx, markerKey{}).(*string)
 
-								var returnNextMarker *string
-								var returnFunctions []types.FunctionConfiguration
-								if nextMarker == nil {
-									returnNextMarker = aws.String("NextMarker")
-									returnFunctions = []types.FunctionConfiguration{
+								var nextMarker *string
+								var functions []types.FunctionConfiguration
+								if marker == nil {
+									nextMarker = aws.String("NextMarker")
+									functions = []types.FunctionConfiguration{
 										{
 											FunctionName: aws.String("function1"),
 											Runtime:      types.RuntimeNodejs,
@@ -268,8 +268,8 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									}
 									return middleware.FinalizeOutput{
 										Result: &lambda.ListFunctionsOutput{
-											NextMarker: returnNextMarker,
-											Functions:  returnFunctions,
+											NextMarker: nextMarker,
+											Functions:  functions,
 										},
 									}, middleware.Metadata{}, nil
 								} else {
@@ -390,13 +390,13 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNextMarkerAndEmptyRegionMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
+								marker := middleware.GetStackValue(ctx, markerKey{}).(*string)
 
-								var returnNextMarker *string
-								var returnFunctions []types.FunctionConfiguration
-								if nextMarker == nil {
-									returnNextMarker = aws.String("NextMarker")
-									returnFunctions = []types.FunctionConfiguration{
+								var nextMarker *string
+								var functions []types.FunctionConfiguration
+								if marker == nil {
+									nextMarker = aws.String("NextMarker")
+									functions = []types.FunctionConfiguration{
 										{
 											FunctionName: aws.String("function1"),
 											Runtime:      types.RuntimeNodejs,
@@ -410,12 +410,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									}
 									return middleware.FinalizeOutput{
 										Result: &lambda.ListFunctionsOutput{
-											NextMarker: returnNextMarker,
-											Functions:  returnFunctions,
+											NextMarker: nextMarker,
+											Functions:  functions,
 										},
 									}, middleware.Metadata{}, nil
 								} else {
-									returnFunctions = []types.FunctionConfiguration{
+									functions = []types.FunctionConfiguration{
 										{
 											FunctionName: aws.String("function3"),
 											Runtime:      types.RuntimeGo1x,
@@ -429,8 +429,8 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									}
 									return middleware.FinalizeOutput{
 										Result: &lambda.ListFunctionsOutput{
-											NextMarker: returnNextMarker,
-											Functions:  returnFunctions,
+											NextMarker: nextMarker,
+											Functions:  functions,
 										},
 									}, middleware.Metadata{}, nil
 								}
@@ -510,13 +510,13 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 						middleware.FinalizeMiddlewareFunc(
 							"ListFunctionsWithNextMarkerAndEmptyRegionErrorMock",
 							func(ctx context.Context, input middleware.FinalizeInput, handler middleware.FinalizeHandler) (middleware.FinalizeOutput, middleware.Metadata, error) {
-								nextMarker := middleware.GetStackValue(ctx, nextMarkerKey{}).(*string)
+								marker := middleware.GetStackValue(ctx, markerKey{}).(*string)
 
-								var returnNextMarker *string
-								var returnFunctions []types.FunctionConfiguration
-								if nextMarker == nil {
-									returnNextMarker = aws.String("NextMarker")
-									returnFunctions = []types.FunctionConfiguration{
+								var nextMarker *string
+								var functions []types.FunctionConfiguration
+								if marker == nil {
+									nextMarker = aws.String("NextMarker")
+									functions = []types.FunctionConfiguration{
 										{
 											FunctionName: aws.String("function1"),
 											Runtime:      types.RuntimeNodejs,
@@ -530,8 +530,8 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									}
 									return middleware.FinalizeOutput{
 										Result: &lambda.ListFunctionsOutput{
-											NextMarker: returnNextMarker,
-											Functions:  returnFunctions,
+											NextMarker: nextMarker,
+											Functions:  functions,
 										},
 									}, middleware.Metadata{}, nil
 								} else {

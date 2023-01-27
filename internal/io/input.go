@@ -9,7 +9,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 )
 
-const checkboxesPageSize = 30
+const CheckboxesPageSize = 30
 
 func GetCheckboxes(label string, opts []string) ([]string, bool) {
 	for {
@@ -17,7 +17,7 @@ func GetCheckboxes(label string, opts []string) ([]string, bool) {
 		prompt := &survey.MultiSelect{
 			Message:  label,
 			Options:  opts,
-			PageSize: checkboxesPageSize,
+			PageSize: CheckboxesPageSize,
 		}
 		survey.AskOne(prompt, &checkboxes)
 

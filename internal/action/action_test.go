@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/go-to-k/lamver/internal/types"
@@ -531,6 +532,7 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 		name                      string
 		args                      args
 		prepareMockLambdaClientFn func(m *client.MockLambdaClient)
+		putCount                  int
 		wantErr                   bool
 	}{
 		{
@@ -558,7 +560,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 1,
+			wantErr:  false,
 		},
 		{
 			name: "putToFunctionChannelByRegion success if there is no corresponding runtime",
@@ -585,7 +588,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 0,
+			wantErr:  false,
 		},
 		{
 			name: "putToFunctionChannelByRegion success if lower keywords given",
@@ -612,7 +616,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 1,
+			wantErr:  false,
 		},
 		{
 			name: "putToFunctionChannelByRegion success if upper keywords given",
@@ -639,7 +644,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 1,
+			wantErr:  false,
 		},
 		{
 			name: "putToFunctionChannelByRegion success if there is no corresponding function matching the given region keywords",
@@ -666,7 +672,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 0,
+			wantErr:  false,
 		},
 		{
 			name: "putToFunctionChannelByRegion success but there is no function",
@@ -682,7 +689,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					[]lambdaTypes.FunctionConfiguration{}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 0,
+			wantErr:  false,
 		},
 		{
 			name: "putToFunctionChannelByRegion success but there is no targetRuntime",
@@ -709,7 +717,8 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 					}, nil,
 				)
 			},
-			wantErr: false,
+			putCount: 0,
+			wantErr:  false,
 		},
 	}
 	for _, tt := range tests {
@@ -719,21 +728,33 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 
 			tt.prepareMockLambdaClientFn(lambdaClientMock)
 
-			ctx := tt.args.ctx
+			putCount := 0
+			ctx, cancel := context.WithCancel(tt.args.ctx)
 			ch := tt.args.functionCh
+			wg := sync.WaitGroup{}
+
+			wg.Add(1)
 			go func() {
+				defer wg.Done()
 				for {
 					select {
 					case <-ctx.Done():
 						return
 					case <-ch:
-					default:
+						putCount++
 					}
 				}
 			}()
 
 			if err := putToFunctionChannelByRegion(ctx, tt.args.region, tt.args.targetRuntime, tt.args.keyword, ch, lambdaClientMock); (err != nil) != tt.wantErr {
 				t.Errorf("putToFunctionChannelByRegion() error = %v, wantErr %v", err, tt.wantErr)
+				cancel()
+				return
+			}
+			cancel()
+			wg.Wait()
+			if !tt.wantErr && putCount != tt.putCount {
+				t.Errorf("putCount = %v, tt.putCount %v", putCount, tt.putCount)
 			}
 		})
 	}

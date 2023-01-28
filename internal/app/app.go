@@ -15,7 +15,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const awsSDKRetryMaxAttempts = 3
+const SDKRetryMaxAttempts = 3
 
 type App struct {
 	Cli               *cli.App
@@ -72,14 +72,14 @@ func (a *App) getAction() func(c *cli.Context) error {
 
 		lambdaClient := client.NewLambda(
 			lambda.NewFromConfig(cfg, func(o *lambda.Options) {
-				o.RetryMaxAttempts = awsSDKRetryMaxAttempts
+				o.RetryMaxAttempts = SDKRetryMaxAttempts
 				o.RetryMode = aws.RetryModeStandard
 			}),
 		)
 
 		ec2Client := client.NewEC2(
 			ec2.NewFromConfig(cfg, func(o *ec2.Options) {
-				o.RetryMaxAttempts = awsSDKRetryMaxAttempts
+				o.RetryMaxAttempts = SDKRetryMaxAttempts
 				o.RetryMode = aws.RetryModeStandard
 			}),
 		)

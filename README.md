@@ -118,10 +118,12 @@ Also this tool can support output results **as a CSV file.**
 
 ### Enter part of the function name
 
+You can search function names in a **case-insensitive**.
+
 It can be **empty.**
 
 ```sh
-Filter a keyword of function names: test-goto
+Filter a keyword of function names(case-insensitive): test-goto
 ```
 
 ### The result will be output
@@ -130,15 +132,15 @@ Filter a keyword of function names: test-goto
 +--------------+----------------+----------------------+------------------------------+
 |   RUNTIME    |     REGION     |     FUNCTIONNAME     |         LASTMODIFIED         |
 +--------------+----------------+----------------------+------------------------------+
-| go1.x        | ap-northeast-1 | test-goto-function2  | 2023-01-07T14:54:23.406+0000 |
+| go1.x        | ap-northeast-1 | Test-goto-function2  | 2023-01-07T14:54:23.406+0000 |
 +--------------+----------------+----------------------+------------------------------+
-| go1.x        | ap-northeast-1 | test-goto-function10 | 2023-01-07T15:29:11.658+0000 |
+| go1.x        | ap-northeast-1 | test-Goto-function10 | 2023-01-07T15:29:11.658+0000 |
 +--------------+----------------+----------------------+------------------------------+
-| go1.x        | us-east-2      | test-goto-function6  | 2023-01-07T15:28:08.507+0000 |
+| go1.x        | us-east-2      | TEST-goto-function6  | 2023-01-07T15:28:08.507+0000 |
 +--------------+----------------+----------------------+------------------------------+
-| nodejs12.x   | ap-northeast-1 | test-goto-function1  | 2023-01-07T14:53:49.141+0000 |
+| nodejs12.x   | ap-northeast-1 | test-GOTO-function1  | 2023-01-07T14:53:49.141+0000 |
 +--------------+----------------+----------------------+------------------------------+
-| nodejs12.x   | us-east-1      | test-goto-function4  | 2023-01-07T15:18:14.191+0000 |
+| nodejs12.x   | us-east-1      | TEST-GOTO-function4  | 2023-01-07T15:18:14.191+0000 |
 +--------------+----------------+----------------------+------------------------------+
 | nodejs12.x   | us-east-1      | test-goto-function7  | 2023-01-07T15:28:20.921+0000 |
 +--------------+----------------+----------------------+------------------------------+

@@ -588,6 +588,60 @@ func Test_putToFunctionChannelByRegion(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "putToFunctionChannelByRegion success if lower keywords given",
+			args: args{
+				ctx:           context.Background(),
+				region:        "us-east-1",
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "function3",
+				functionCh:    make(chan *types.LambdaFunctionData),
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("Function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("Function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			wantErr: false,
+		},
+		{
+			name: "putToFunctionChannelByRegion success if upper keywords given",
+			args: args{
+				ctx:           context.Background(),
+				region:        "us-east-1",
+				targetRuntime: []string{"nodejs18.x", "nodejs"},
+				keyword:       "FUNCTION3",
+				functionCh:    make(chan *types.LambdaFunctionData),
+			},
+			prepareMockLambdaClientFn: func(m *client.MockLambdaClient) {
+				m.EXPECT().ListFunctionsWithRegion(gomock.Any(), "us-east-1").Return(
+					[]lambdaTypes.FunctionConfiguration{
+						{
+							FunctionName: aws.String("Function3"),
+							Runtime:      lambdaTypes.RuntimeNodejs,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+						{
+							FunctionName: aws.String("Function4"),
+							Runtime:      lambdaTypes.RuntimeGo1x,
+							LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
+						},
+					}, nil,
+				)
+			},
+			wantErr: false,
+		},
+		{
 			name: "putToFunctionChannelByRegion success if there is no corresponding function matching the given region keywords",
 			args: args{
 				ctx:           context.Background(),

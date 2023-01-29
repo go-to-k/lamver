@@ -6,7 +6,7 @@ The description in **Japanese** is available on the following blog page. -> [Blo
 
 ## What is
 
-CLI tool to display Lambda runtime values and versions.
+CLI tool to search Lambda runtime values and versions.
 
 By filtering by **regions, runtime and versions, or part of the function name**, you can find a list of functions **across regions**.
 
@@ -60,7 +60,7 @@ Also this tool can support output results **as a CSV file.**
 ### Choose regions
 
 ```sh
-? Select regions you want to display.
+? Select regions you want to search.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
   [x]  ap-northeast-1
   [ ]  ap-northeast-2
@@ -84,7 +84,7 @@ Also this tool can support output results **as a CSV file.**
 ### Choose runtime values
 
 ```sh
-? Select runtime values you want to display.
+? Select runtime values you want to search.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
 > [ ]  dotnet6
   [ ]  dotnetcore1.0

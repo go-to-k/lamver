@@ -15,7 +15,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const awsSDKRetryMaxAttempts = 3
+const SDKRetryMaxAttempts = 3
 
 type App struct {
 	Cli               *cli.App
@@ -29,7 +29,7 @@ func NewApp(version string) *App {
 
 	app.Cli = &cli.App{
 		Name:  "lamver",
-		Usage: "CLI tool to display Lambda runtime and versions.",
+		Usage: "CLI tool to search Lambda runtime and versions.",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "profile",
@@ -72,14 +72,14 @@ func (a *App) getAction() func(c *cli.Context) error {
 
 		lambdaClient := client.NewLambda(
 			lambda.NewFromConfig(cfg, func(o *lambda.Options) {
-				o.RetryMaxAttempts = awsSDKRetryMaxAttempts
+				o.RetryMaxAttempts = SDKRetryMaxAttempts
 				o.RetryMode = aws.RetryModeStandard
 			}),
 		)
 
 		ec2Client := client.NewEC2(
 			ec2.NewFromConfig(cfg, func(o *ec2.Options) {
-				o.RetryMaxAttempts = awsSDKRetryMaxAttempts
+				o.RetryMaxAttempts = SDKRetryMaxAttempts
 				o.RetryMode = aws.RetryModeStandard
 			}),
 		)
@@ -95,13 +95,13 @@ func (a *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		regionsLabel := "Select regions you want to display.\n"
+		regionsLabel := "Select regions you want to search.\n"
 		targetRegions, continuation := io.GetCheckboxes(regionsLabel, allRegions)
 		if !continuation {
 			return nil
 		}
 
-		runtimeLabel := "Select runtime values you want to display.\n"
+		runtimeLabel := "Select runtime values you want to search.\n"
 		targetRuntime, continuation := io.GetCheckboxes(runtimeLabel, allRuntime)
 		if !continuation {
 			return nil

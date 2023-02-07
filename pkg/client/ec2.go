@@ -12,17 +12,13 @@ type EC2Client interface {
 	DescribeRegions(ctx context.Context) ([]string, error)
 }
 
-type EC2SDKClient interface {
-	DescribeRegions(ctx context.Context, params *ec2.DescribeRegionsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeRegionsOutput, error)
-}
-
 type EC2 struct {
-	client EC2SDKClient
+	client *ec2.Client
 }
 
 var _ EC2Client = (*EC2)(nil)
 
-func NewEC2(client EC2SDKClient) *EC2 {
+func NewEC2(client *ec2.Client) *EC2 {
 	return &EC2{
 		client: client,
 	}

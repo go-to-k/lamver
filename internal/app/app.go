@@ -107,7 +107,7 @@ func (a *App) getAction() func(c *cli.Context) error {
 			return nil
 		}
 
-		keywordLabel := "Filter a keyword of function names: "
+		keywordLabel := "Filter a keyword of function names(case-insensitive): "
 		keyword := io.InputKeywordForFilter(keywordLabel)
 
 		createFunctionListInput := &action.CreateFunctionListInput{

@@ -126,7 +126,10 @@ func putToFunctionChannelByRegion(
 			if string(function.Runtime) != runtime {
 				continue
 			}
-			if strings.Contains(*function.FunctionName, keyword) {
+			// for case-insensitive
+			lowerFunctionName := strings.ToLower(*function.FunctionName)
+			lowerKeyword := strings.ToLower(keyword)
+			if strings.Contains(lowerFunctionName, lowerKeyword) {
 				functionCh <- &types.LambdaFunctionData{
 					Runtime:      runtime,
 					Region:       region,

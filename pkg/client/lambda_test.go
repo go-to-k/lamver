@@ -54,12 +54,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 										NextMarker: nil,
 										Functions: []types.FunctionConfiguration{
 											{
-												FunctionName: aws.String("function1"),
+												FunctionName: aws.String("Function1"),
 												Runtime:      types.RuntimeNodejs,
 												LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 											},
 											{
-												FunctionName: aws.String("function2"),
+												FunctionName: aws.String("Function2"),
 												Runtime:      types.RuntimeNodejs18x,
 												LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 											},
@@ -74,12 +74,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			want: []types.FunctionConfiguration{
 				{
-					FunctionName: aws.String("function1"),
+					FunctionName: aws.String("Function1"),
 					Runtime:      types.RuntimeNodejs,
 					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function2"),
+					FunctionName: aws.String("Function2"),
 					Runtime:      types.RuntimeNodejs18x,
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},
@@ -139,12 +139,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									nextMarker = aws.String("NextMarker")
 									functions = []types.FunctionConfiguration{
 										{
-											FunctionName: aws.String("function1"),
+											FunctionName: aws.String("Function1"),
 											Runtime:      types.RuntimeNodejs,
 											LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 										},
 										{
-											FunctionName: aws.String("function2"),
+											FunctionName: aws.String("Function2"),
 											Runtime:      types.RuntimeNodejs18x,
 											LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 										},
@@ -158,12 +158,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 								} else {
 									functions = []types.FunctionConfiguration{
 										{
-											FunctionName: aws.String("function3"),
+											FunctionName: aws.String("Function3"),
 											Runtime:      types.RuntimeGo1x,
 											LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
 										},
 										{
-											FunctionName: aws.String("function4"),
+											FunctionName: aws.String("Function4"),
 											Runtime:      types.RuntimeProvidedal2,
 											LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
 										},
@@ -184,22 +184,22 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			want: []types.FunctionConfiguration{
 				{
-					FunctionName: aws.String("function1"),
+					FunctionName: aws.String("Function1"),
 					Runtime:      types.RuntimeNodejs,
 					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function2"),
+					FunctionName: aws.String("Function2"),
 					Runtime:      types.RuntimeNodejs18x,
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function3"),
+					FunctionName: aws.String("Function3"),
 					Runtime:      types.RuntimeGo1x,
 					LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function4"),
+					FunctionName: aws.String("Function4"),
 					Runtime:      types.RuntimeProvidedal2,
 					LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
 				},
@@ -256,12 +256,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									nextMarker = aws.String("NextMarker")
 									functions = []types.FunctionConfiguration{
 										{
-											FunctionName: aws.String("function1"),
+											FunctionName: aws.String("Function1"),
 											Runtime:      types.RuntimeNodejs,
 											LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 										},
 										{
-											FunctionName: aws.String("function2"),
+											FunctionName: aws.String("Function2"),
 											Runtime:      types.RuntimeNodejs18x,
 											LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 										},
@@ -286,12 +286,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			want: []types.FunctionConfiguration{
 				{
-					FunctionName: aws.String("function1"),
+					FunctionName: aws.String("Function1"),
 					Runtime:      types.RuntimeNodejs,
 					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function2"),
+					FunctionName: aws.String("Function2"),
 					Runtime:      types.RuntimeNodejs18x,
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},
@@ -313,12 +313,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 										NextMarker: nil,
 										Functions: []types.FunctionConfiguration{
 											{
-												FunctionName: aws.String("function1"),
+												FunctionName: aws.String("Function1"),
 												Runtime:      types.RuntimeNodejs,
 												LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 											},
 											{
-												FunctionName: aws.String("function2"),
+												FunctionName: aws.String("Function2"),
 												Runtime:      types.RuntimeNodejs18x,
 												LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 											},
@@ -333,12 +333,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			want: []types.FunctionConfiguration{
 				{
-					FunctionName: aws.String("function1"),
+					FunctionName: aws.String("Function1"),
 					Runtime:      types.RuntimeNodejs,
 					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function2"),
+					FunctionName: aws.String("Function2"),
 					Runtime:      types.RuntimeNodejs18x,
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},
@@ -398,12 +398,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									nextMarker = aws.String("NextMarker")
 									functions = []types.FunctionConfiguration{
 										{
-											FunctionName: aws.String("function1"),
+											FunctionName: aws.String("Function1"),
 											Runtime:      types.RuntimeNodejs,
 											LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 										},
 										{
-											FunctionName: aws.String("function2"),
+											FunctionName: aws.String("Function2"),
 											Runtime:      types.RuntimeNodejs18x,
 											LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 										},
@@ -417,12 +417,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 								} else {
 									functions = []types.FunctionConfiguration{
 										{
-											FunctionName: aws.String("function3"),
+											FunctionName: aws.String("Function3"),
 											Runtime:      types.RuntimeGo1x,
 											LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
 										},
 										{
-											FunctionName: aws.String("function4"),
+											FunctionName: aws.String("Function4"),
 											Runtime:      types.RuntimeProvidedal2,
 											LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
 										},
@@ -443,22 +443,22 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			want: []types.FunctionConfiguration{
 				{
-					FunctionName: aws.String("function1"),
+					FunctionName: aws.String("Function1"),
 					Runtime:      types.RuntimeNodejs,
 					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function2"),
+					FunctionName: aws.String("Function2"),
 					Runtime:      types.RuntimeNodejs18x,
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function3"),
+					FunctionName: aws.String("Function3"),
 					Runtime:      types.RuntimeGo1x,
 					LastModified: aws.String("2022-12-21T10:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function4"),
+					FunctionName: aws.String("Function4"),
 					Runtime:      types.RuntimeProvidedal2,
 					LastModified: aws.String("2022-12-22T11:47:43.728+0000"),
 				},
@@ -518,12 +518,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 									nextMarker = aws.String("NextMarker")
 									functions = []types.FunctionConfiguration{
 										{
-											FunctionName: aws.String("function1"),
+											FunctionName: aws.String("Function1"),
 											Runtime:      types.RuntimeNodejs,
 											LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 										},
 										{
-											FunctionName: aws.String("function2"),
+											FunctionName: aws.String("Function2"),
 											Runtime:      types.RuntimeNodejs18x,
 											LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 										},
@@ -548,12 +548,12 @@ func TestLambda_ListFunctionsWithRegion(t *testing.T) {
 			},
 			want: []types.FunctionConfiguration{
 				{
-					FunctionName: aws.String("function1"),
+					FunctionName: aws.String("Function1"),
 					Runtime:      types.RuntimeNodejs,
 					LastModified: aws.String("2022-12-21T09:47:43.728+0000"),
 				},
 				{
-					FunctionName: aws.String("function2"),
+					FunctionName: aws.String("Function2"),
 					Runtime:      types.RuntimeNodejs18x,
 					LastModified: aws.String("2022-12-22T09:47:43.728+0000"),
 				},

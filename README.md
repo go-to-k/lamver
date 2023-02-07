@@ -6,13 +6,13 @@ The description in **Japanese** is available on the following blog page. -> [Blo
 
 ## What is
 
-CLI tool to search Lambda runtime values and versions.
+CLI tool to search AWS Lambda runtime values and versions.
 
 By filtering by **regions, runtime and versions, or part of the function name**, you can find a list of functions **across regions**.
 
 This will allow you can see the following.
 
-- What functions exist in which regions
+- What Lambda functions exist in which regions
 - Whether there are any functions that **have reached EOL**
 - Whether there is a function in **an unexpected region**
 - Whether a function exists based on **a specific naming rule**

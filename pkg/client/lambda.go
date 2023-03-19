@@ -1,4 +1,4 @@
-//go:generate mockgen -source=./lambda.go -destination=./lambda_mock.go -package=client -write_package_comment=false
+//go:generate mockgen -source=$GOFILE -destination=./lambda_mock.go -package=$GOPACKAGE -write_package_comment=false
 package client
 
 import (

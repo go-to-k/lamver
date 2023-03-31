@@ -6,7 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/aws/aws-sdk-go-v2 v1.17.7
 	github.com/aws/aws-sdk-go-v2/config v1.18.7
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.91.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.92.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.30.2
 	github.com/aws/smithy-go v1.13.5
 	github.com/golang/mock v1.6.0

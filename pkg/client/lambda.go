@@ -135,10 +135,10 @@ func (c *Lambda) splitVersion(runtimeStr string) (string, string, string) {
 }
 
 func (c *Lambda) compareActualVersion(first string, second string) (hasFinished bool, shouldSorted bool) {
-	if len(first) == 0 {
+	if first == "" {
 		return true, true
 	}
-	if len(second) == 0 {
+	if second == "" {
 		return true, false
 	}
 

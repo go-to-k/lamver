@@ -3,7 +3,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"sort"
 	"strconv"
@@ -126,11 +125,7 @@ func (c *Lambda) ListRuntimeValues() []string {
 			sInt, _ := strconv.Atoi(secondIntegers)
 			return fInt < sInt
 		}
-		if first == "java8.al2" && second == "java8" {
-			fmt.Println(firstDecimals)
-			fmt.Println(secondDecimals)
-			fmt.Println()
-		}
+
 		if firstDecimals == "" && secondDecimals != "" {
 			return true
 		}

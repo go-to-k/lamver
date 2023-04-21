@@ -3,7 +3,11 @@ package client
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
@@ -78,10 +82,101 @@ func (c *Lambda) ListRuntimeValues() []string {
 	runtimeStrList := []string{}
 	runtimeList := r.Values()
 
+	sort.Slice(runtimeList, func(i, j int) bool {
+		first := string(runtimeList[i])
+		second := string(runtimeList[j])
+
+		firstRuntime, firstVersion, firstRest := c.splitVersion(first)
+		secondRuntime, secondVersion, secondRest := c.splitVersion(second)
+
+		if firstRuntime != secondRuntime {
+			return firstRuntime < secondRuntime
+		}
+
+		if len(firstVersion) == 0 {
+			return true
+		}
+		if len(secondVersion) == 0 {
+			return false
+		}
+
+		if firstVersion[:len(firstVersion)-1] == "." {
+			firstVersion = firstVersion[len(firstVersion)-1:]
+		}
+		if secondVersion[:len(secondVersion)-1] == "." {
+			secondVersion = secondVersion[len(secondVersion)-1:]
+		}
+
+		firstIntegers := firstVersion
+		firstDecimals := ""
+		secondIntegers := secondVersion
+		secondDecimals := ""
+
+		if i := strings.Index(firstVersion, "."); i >= 0 {
+			firstIntegers = firstVersion[:i]
+			firstDecimals = firstVersion[i+1:]
+		}
+		if i := strings.Index(secondVersion, "."); i >= 0 {
+			secondIntegers = secondVersion[:i]
+			secondDecimals = secondVersion[i+1:]
+		}
+
+		if firstIntegers != secondIntegers {
+			fInt, _ := strconv.Atoi(firstIntegers)
+			sInt, _ := strconv.Atoi(secondIntegers)
+			return fInt < sInt
+		}
+		if first == "java8.al2" && second == "java8" {
+			fmt.Println(firstDecimals)
+			fmt.Println(secondDecimals)
+			fmt.Println()
+		}
+		if firstDecimals == "" && secondDecimals != "" {
+			return true
+		}
+		if firstDecimals != "" && secondDecimals == "" {
+			return false
+		}
+		if firstDecimals != secondDecimals {
+			fDec, _ := strconv.Atoi(firstDecimals)
+			sDec, _ := strconv.Atoi(secondDecimals)
+			return fDec < sDec
+		}
+
+		if firstRest == "" {
+			return true
+		}
+		if secondRest == "" {
+			return false
+		}
+
+		return firstRest < secondRest
+	})
+
 	for _, runtime := range runtimeList {
 		runtimeStrList = append(runtimeStrList, string(runtime))
 	}
 
-	sort.Strings(runtimeStrList)
 	return runtimeStrList
+}
+
+func (c *Lambda) splitVersion(runtimeStr string) (string, string, string) {
+	r := regexp.MustCompile(`^(\D+)([\d\.]+)?(.*)?$`)
+	matches := r.FindStringSubmatch(runtimeStr)
+
+	runtime := ""
+	version := ""
+	rest := ""
+
+	if len(matches) > 1 {
+		runtime = matches[1]
+	}
+	if len(matches) > 2 {
+		version = matches[2]
+	}
+	if len(matches) > 3 {
+		rest = matches[3]
+	}
+
+	return runtime, version, rest
 }

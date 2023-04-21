@@ -617,6 +617,7 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 				"provided",
 				"provided.al2",
 				"python2.7",
+				"python3.10",
 				"python3.6",
 				"python3.7",
 				"python3.8",

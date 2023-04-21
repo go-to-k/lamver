@@ -3,7 +3,10 @@ package client
 
 import (
 	"context"
+	"regexp"
 	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/lambda/types"
@@ -78,10 +81,105 @@ func (c *Lambda) ListRuntimeValues() []string {
 	runtimeStrList := []string{}
 	runtimeList := r.Values()
 
+	sort.Slice(runtimeList, func(i, j int) bool {
+		first := string(runtimeList[i])
+		second := string(runtimeList[j])
+
+		firstRuntime, firstVersion, firstRest := c.splitVersion(first)
+		secondRuntime, secondVersion, secondRest := c.splitVersion(second)
+
+		if firstRuntime != secondRuntime {
+			return firstRuntime < secondRuntime
+		}
+
+		if hasFinished, shouldSorted := c.compareActualVersion(firstVersion, secondVersion); hasFinished {
+			return shouldSorted
+		}
+
+		if firstRest == "" {
+			return true
+		}
+		if secondRest == "" {
+			return false
+		}
+
+		return firstRest < secondRest
+	})
+
 	for _, runtime := range runtimeList {
 		runtimeStrList = append(runtimeStrList, string(runtime))
 	}
 
-	sort.Strings(runtimeStrList)
 	return runtimeStrList
+}
+
+func (c *Lambda) splitVersion(runtimeStr string) (string, string, string) {
+	r := regexp.MustCompile(`^(\D+)([\d\.]+)?(.*)?$`)
+	matches := r.FindStringSubmatch(runtimeStr)
+
+	runtime := ""
+	version := ""
+	rest := ""
+
+	if len(matches) > 1 {
+		runtime = matches[1]
+	}
+	if len(matches) > 2 {
+		version = matches[2]
+	}
+	if len(matches) > 3 {
+		rest = matches[3]
+	}
+
+	return runtime, version, rest
+}
+
+func (c *Lambda) compareActualVersion(first string, second string) (hasFinished bool, shouldSorted bool) {
+	if len(first) == 0 {
+		return true, true
+	}
+	if len(second) == 0 {
+		return true, false
+	}
+
+	if first[:len(first)-1] == "." {
+		first = first[len(first)-1:]
+	}
+	if second[:len(second)-1] == "." {
+		second = second[len(second)-1:]
+	}
+
+	firstIntegers := first
+	firstDecimals := ""
+	secondIntegers := second
+	secondDecimals := ""
+
+	if i := strings.Index(first, "."); i >= 0 {
+		firstIntegers = first[:i]
+		firstDecimals = first[i+1:]
+	}
+	if i := strings.Index(second, "."); i >= 0 {
+		secondIntegers = second[:i]
+		secondDecimals = second[i+1:]
+	}
+
+	if firstIntegers != secondIntegers {
+		fInt, _ := strconv.Atoi(firstIntegers)
+		sInt, _ := strconv.Atoi(secondIntegers)
+		return true, fInt < sInt
+	}
+
+	if firstDecimals == "" && secondDecimals != "" {
+		return true, true
+	}
+	if firstDecimals != "" && secondDecimals == "" {
+		return true, false
+	}
+	if firstDecimals != secondDecimals {
+		fDec, _ := strconv.Atoi(firstDecimals)
+		sDec, _ := strconv.Atoi(secondDecimals)
+		return true, fDec < sDec
+	}
+
+	return false, false
 }

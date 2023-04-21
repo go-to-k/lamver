@@ -92,19 +92,19 @@ Also this tool can support output results **as a CSV file.**
   [ ]  dotnetcore2.1
   [ ]  dotnetcore3.1
   [x]  go1.x
-  [ ]  java11
   [ ]  java8
   [ ]  java8.al2
+  [ ]  java11
   [ ]  nodejs
+  [ ]  nodejs4.3
+  [ ]  nodejs4.3-edge
+  [ ]  nodejs6.10
+  [ ]  nodejs8.10
   [ ]  nodejs10.x
   [x]  nodejs12.x
   [ ]  nodejs14.x
   [ ]  nodejs16.x
   [ ]  nodejs18.x
-  [ ]  nodejs4.3
-  [ ]  nodejs4.3-edge
-  [ ]  nodejs6.10
-  [ ]  nodejs8.10
   [ ]  provided
   [x]  provided.al2
   [ ]  python2.7
@@ -112,6 +112,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  python3.7
   [ ]  python3.8
   [ ]  python3.9
+  [ ]  python3.10
   [ ]  ruby2.5
   [ ]  ruby2.7
 ```

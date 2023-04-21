@@ -92,50 +92,8 @@ func (c *Lambda) ListRuntimeValues() []string {
 			return firstRuntime < secondRuntime
 		}
 
-		if len(firstVersion) == 0 {
-			return true
-		}
-		if len(secondVersion) == 0 {
-			return false
-		}
-
-		if firstVersion[:len(firstVersion)-1] == "." {
-			firstVersion = firstVersion[len(firstVersion)-1:]
-		}
-		if secondVersion[:len(secondVersion)-1] == "." {
-			secondVersion = secondVersion[len(secondVersion)-1:]
-		}
-
-		firstIntegers := firstVersion
-		firstDecimals := ""
-		secondIntegers := secondVersion
-		secondDecimals := ""
-
-		if i := strings.Index(firstVersion, "."); i >= 0 {
-			firstIntegers = firstVersion[:i]
-			firstDecimals = firstVersion[i+1:]
-		}
-		if i := strings.Index(secondVersion, "."); i >= 0 {
-			secondIntegers = secondVersion[:i]
-			secondDecimals = secondVersion[i+1:]
-		}
-
-		if firstIntegers != secondIntegers {
-			fInt, _ := strconv.Atoi(firstIntegers)
-			sInt, _ := strconv.Atoi(secondIntegers)
-			return fInt < sInt
-		}
-
-		if firstDecimals == "" && secondDecimals != "" {
-			return true
-		}
-		if firstDecimals != "" && secondDecimals == "" {
-			return false
-		}
-		if firstDecimals != secondDecimals {
-			fDec, _ := strconv.Atoi(firstDecimals)
-			sDec, _ := strconv.Atoi(secondDecimals)
-			return fDec < sDec
+		if hasFinished, shouldSorted := c.compareActualVersion(firstVersion, secondVersion); hasFinished {
+			return shouldSorted
 		}
 
 		if firstRest == "" {
@@ -174,4 +132,54 @@ func (c *Lambda) splitVersion(runtimeStr string) (string, string, string) {
 	}
 
 	return runtime, version, rest
+}
+
+func (c *Lambda) compareActualVersion(first string, second string) (hasFinished bool, shouldSorted bool) {
+	if len(first) == 0 {
+		return true, true
+	}
+	if len(second) == 0 {
+		return true, false
+	}
+
+	if first[:len(first)-1] == "." {
+		first = first[len(first)-1:]
+	}
+	if second[:len(second)-1] == "." {
+		second = second[len(second)-1:]
+	}
+
+	firstIntegers := first
+	firstDecimals := ""
+	secondIntegers := second
+	secondDecimals := ""
+
+	if i := strings.Index(first, "."); i >= 0 {
+		firstIntegers = first[:i]
+		firstDecimals = first[i+1:]
+	}
+	if i := strings.Index(second, "."); i >= 0 {
+		secondIntegers = second[:i]
+		secondDecimals = second[i+1:]
+	}
+
+	if firstIntegers != secondIntegers {
+		fInt, _ := strconv.Atoi(firstIntegers)
+		sInt, _ := strconv.Atoi(secondIntegers)
+		return true, fInt < sInt
+	}
+
+	if firstDecimals == "" && secondDecimals != "" {
+		return true, true
+	}
+	if firstDecimals != "" && secondDecimals == "" {
+		return true, false
+	}
+	if firstDecimals != secondDecimals {
+		fDec, _ := strconv.Atoi(firstDecimals)
+		sDec, _ := strconv.Atoi(secondDecimals)
+		return true, fDec < sDec
+	}
+
+	return false, false
 }

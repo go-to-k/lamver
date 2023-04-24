@@ -1,6 +1,6 @@
 # lamver
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/go-to-k/lamver)](https://goreportcard.com/report/github.com/go-to-k/lamver) ![GitHub](https://img.shields.io/github/license/go-to-k/lamver) ![GitHub](https://img.shields.io/github/v/release/go-to-k/lamver)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-to-k/lamver)](https://goreportcard.com/report/github.com/go-to-k/lamver) ![GitHub](https://img.shields.io/github/license/go-to-k/lamver) ![GitHub](https://img.shields.io/github/v/release/go-to-k/lamver) [![ci](https://github.com/go-to-k/lamver/actions/workflows/ci.yml/badge.svg)](https://github.com/go-to-k/lamver/actions/workflows/ci.yml)
 
 The description in **Japanese** is available on the following blog page. -> [Blog](https://go-to-k.hatenablog.com/entry/lamver)
 

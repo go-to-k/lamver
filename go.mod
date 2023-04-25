@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
-	github.com/aws/aws-sdk-go-v2 v1.17.8
+	github.com/aws/aws-sdk-go-v2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.7
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.93.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.33.0

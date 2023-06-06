@@ -95,6 +95,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  java8
   [ ]  java8.al2
   [ ]  java11
+  [ ]  java17
   [ ]  nodejs
   [ ]  nodejs4.3
   [ ]  nodejs4.3-edge
@@ -115,6 +116,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  python3.10
   [ ]  ruby2.5
   [ ]  ruby2.7
+  [ ]  ruby3.2
 ```
 
 ### Enter part of the function name

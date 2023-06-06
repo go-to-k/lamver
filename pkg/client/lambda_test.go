@@ -604,6 +604,7 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 				"java8",
 				"java8.al2",
 				"java11",
+				"java17",
 				"nodejs",
 				"nodejs4.3",
 				"nodejs4.3-edge",
@@ -624,6 +625,7 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 				"python3.10",
 				"ruby2.5",
 				"ruby2.7",
+				"ruby3.2",
 			},
 		},
 	}

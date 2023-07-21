@@ -9,7 +9,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 )
 
-const CheckboxesPageSize = 30
+const CheckboxesPageSize = 50
 
 func GetCheckboxes(label string, opts []string) ([]string, bool) {
 	for {

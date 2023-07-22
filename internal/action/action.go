@@ -3,6 +3,7 @@ package action
 import (
 	"context"
 	"runtime"
+	"sort"
 	"strings"
 	"sync"
 
@@ -155,6 +156,11 @@ func sortAndSetFunctionList(regionList []string, runtimeList []string, functionM
 			if _, exist := functionMap[runtime][region]; !exist {
 				continue
 			}
+
+			sort.Slice(functionMap[runtime][region], func(i, j int) bool {
+				return functionMap[runtime][region][i][0] < functionMap[runtime][region][j][0]
+			})
+
 			for _, f := range functionMap[runtime][region] {
 				var data []string
 				data = append(data, runtime)

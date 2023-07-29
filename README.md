@@ -114,6 +114,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  python3.8
   [ ]  python3.9
   [ ]  python3.10
+  [ ]  python3.11
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2

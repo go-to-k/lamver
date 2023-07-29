@@ -775,7 +775,7 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 			name: "sortAndSetFunctionList success",
 			args: args{
 				regionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
-				runtimeList: []string{"nodejs18.x", "nodejs"},
+				runtimeList: []string{"nodejs", "nodejs18.x"},
 				functionMap: map[string]map[string][][]string{
 					"nodejs": {
 						"ap-northeast-1": {
@@ -796,10 +796,53 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 				},
 			},
 			want: [][]string{
-				{"nodejs18.x", "ap-northeast-1", "Function3", "2022-12-22T09:47:43.728+0000"},
-				{"nodejs18.x", "us-east-2", "Function3", "2022-12-22T09:47:43.728+0000"},
 				{"nodejs", "ap-northeast-1", "Function1", "2022-12-21T09:47:43.728+0000"},
 				{"nodejs", "us-east-1", "Function1", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs18.x", "ap-northeast-1", "Function3", "2022-12-22T09:47:43.728+0000"},
+				{"nodejs18.x", "us-east-2", "Function3", "2022-12-22T09:47:43.728+0000"},
+			},
+		},
+		{
+			name: "sortAndSetFunctionList success with sorted by function names per regions and runtime",
+			args: args{
+				regionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
+				runtimeList: []string{"nodejs", "nodejs18.x"},
+				functionMap: map[string]map[string][][]string{
+					"nodejs": {
+						"ap-northeast-1": {
+							[]string{"Function-A", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-c", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-b", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-B", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-a", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-1", "2022-12-21T09:47:43.728+0000"},
+						},
+						"us-east-1": {
+							[]string{"Function-b-1", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-a-2", "2022-12-21T09:47:43.728+0000"},
+						},
+					},
+					"nodejs18.x": {
+						"ap-northeast-1": {
+							[]string{"Function-a-3", "2022-12-21T09:47:43.728+0000"},
+							[]string{"Function-a-0", "2022-12-21T09:47:43.728+0000"},
+						},
+					},
+				},
+			},
+			want: [][]string{
+				{"nodejs", "ap-northeast-1", "Function", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "Function-1", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "Function-A", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "Function-B", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "Function-a", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "Function-b", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "ap-northeast-1", "Function-c", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "us-east-1", "Function-a-2", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs", "us-east-1", "Function-b-1", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs18.x", "ap-northeast-1", "Function-a-0", "2022-12-21T09:47:43.728+0000"},
+				{"nodejs18.x", "ap-northeast-1", "Function-a-3", "2022-12-21T09:47:43.728+0000"},
 			},
 		},
 		{
@@ -832,7 +875,7 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 			name: "sortAndSetFunctionList success if regionList is empty",
 			args: args{
 				regionList:  []string{},
-				runtimeList: []string{"nodejs18.x", "nodejs"},
+				runtimeList: []string{"nodejs", "nodejs18.x"},
 				functionMap: map[string]map[string][][]string{
 					"nodejs": {
 						"ap-northeast-1": {
@@ -858,7 +901,7 @@ func Test_sortAndSetFunctionList(t *testing.T) {
 			name: "sortAndSetFunctionList success if functionMap is empty",
 			args: args{
 				regionList:  []string{"ap-northeast-1", "us-east-1", "us-east-2"},
-				runtimeList: []string{"nodejs18.x", "nodejs"},
+				runtimeList: []string{"nodejs", "nodejs18.x"},
 				functionMap: map[string]map[string][][]string{},
 			},
 			want: [][]string{},

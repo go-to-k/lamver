@@ -4,6 +4,8 @@
 
 The description in **Japanese** is available on the following blog page. -> [Blog](https://go-to-k.hatenablog.com/entry/lamver)
 
+The description in **English** is available on the following blog page. -> [Blog](https://dev.to/aws-builders/lambda-runtimeversion-search-tool-across-regions-41l0)
+
 ## What is
 
 CLI tool to search AWS Lambda runtime values and versions.

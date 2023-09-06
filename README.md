@@ -50,6 +50,8 @@ Also this tool can support output results **as a CSV file.**
     - The region to output is selected interactively and does not need to be specified.
 - -o, --output: optional
   - Output file path for CSV format
+- -k, --keyword: optional
+  - Keyword for function name filtering (case-insensitive)
 
 ## Input flow
 
@@ -57,6 +59,12 @@ Also this tool can support output results **as a CSV file.**
 
 ```sh
 ❯ lamver
+```
+
+You can specify `-k, --keyword` option. This is a keyword for **function name filtering (case-insensitive)**.
+
+```sh
+❯ lamver -k goto
 ```
 
 ### Choose regions
@@ -126,7 +134,9 @@ Also this tool can support output results **as a CSV file.**
 
 You can search function names in a **case-insensitive**.
 
-It can be **empty.**
+**Empty** input will output **all functions**.
+
+This phase is skipped if you specify `-k` option.
 
 ```sh
 Filter a keyword of function names(case-insensitive): test-goto

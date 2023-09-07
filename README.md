@@ -38,7 +38,7 @@ Also this tool can support output results **as a CSV file.**
 
 ## How to use
   ```sh
-  lamver [-p <profile>] [-r <default region>] [-o <output file path>]
+  lamver [-p <profile>] [-r <default region>] [-o <output file path>] [-k <keyword for function name>]
   ```
 
 ### options

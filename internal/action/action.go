@@ -117,6 +117,8 @@ func putToFunctionChannelByRegion(
 		return err
 	}
 
+	lowerKeyword := strings.ToLower(keyword)
+
 	for _, function := range functions {
 		for _, runtime := range targetRuntime {
 			select {
@@ -129,7 +131,6 @@ func putToFunctionChannelByRegion(
 			}
 			// for case-insensitive
 			lowerFunctionName := strings.ToLower(*function.FunctionName)
-			lowerKeyword := strings.ToLower(keyword)
 			if strings.Contains(lowerFunctionName, lowerKeyword) {
 				functionCh <- &types.LambdaFunctionData{
 					Runtime:      runtime,

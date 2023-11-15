@@ -116,8 +116,10 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  nodejs14.x
   [ ]  nodejs16.x
   [ ]  nodejs18.x
+  [ ]  nodejs20.x
   [ ]  provided
   [x]  provided.al2
+  [ ]  provided.al2023
   [ ]  python2.7
   [ ]  python3.6
   [ ]  python3.7
@@ -125,6 +127,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  python3.9
   [ ]  python3.10
   [ ]  python3.11
+  [ ]  python3.12
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2

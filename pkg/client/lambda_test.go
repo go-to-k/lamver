@@ -605,6 +605,7 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 				"java8.al2",
 				"java11",
 				"java17",
+				"java21",
 				"nodejs",
 				"nodejs4.3",
 				"nodejs4.3-edge",

@@ -106,6 +106,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  java8.al2
   [ ]  java11
   [ ]  java17
+  [ ]  java21
   [ ]  nodejs
   [ ]  nodejs4.3
   [ ]  nodejs4.3-edge

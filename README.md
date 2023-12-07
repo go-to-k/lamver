@@ -24,20 +24,36 @@ Also this tool can support output results **as a CSV file.**
 ## Install
 
 - Homebrew
-  ```sh
+
+  ```bash
   brew install go-to-k/tap/lamver
   ```
+
+- Linux, Darwin (macOS) and Windows
+
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/go-to-k/lamver/main/install.sh | sh
+  lamver -h
+
+  # To install a specific version of lamver
+  # e.g. version 0.8.0
+  curl -fsSL https://raw.githubusercontent.com/go-to-k/lamver/main/install.sh | sh -s "v0.8.0"
+  lamver -h
+  ```
+
 - Binary
   - [Releases](https://github.com/go-to-k/lamver/releases)
 - Git Clone and install(for developers)
-  ```sh
+
+  ```bash
   git clone https://github.com/go-to-k/lamver.git
   cd lamver
   make install
   ```
 
 ## How to use
-  ```sh
+
+  ```bash
   lamver [-p <profile>] [-r <default region>] [-o <output file path>] [-k <keyword for function name>]
   ```
 
@@ -57,7 +73,7 @@ Also this tool can support output results **as a CSV file.**
 
 ### Enter `lamver`
 
-```sh
+```bash
 ❯ lamver
 ```
 
@@ -69,7 +85,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
 
 ### Choose regions
 
-```sh
+```bash
 ? Select regions you want to search.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
   [x]  ap-northeast-1
@@ -93,7 +109,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
 
 ### Choose runtime values
 
-```sh
+```bash
 ? Select runtime values you want to search.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
 > [ ]  dotnet6
@@ -142,13 +158,13 @@ You can search function names in a **case-insensitive**.
 
 This phase is skipped if you specify `-k` option.
 
-```sh
+```bash
 Filter a keyword of function names(case-insensitive): test-goto
 ```
 
 ### The result will be output
 
-```sh
+```bash
 +--------------+----------------+----------------------+------------------------------+
 |   RUNTIME    |     REGION     |     FUNCTIONNAME     |         LASTMODIFIED         |
 +--------------+----------------+----------------------+------------------------------+
@@ -181,6 +197,6 @@ By default, results are output as table format on the screen.
 
 If you add `-o` option, then results can be output **as a CSV file**.
 
-```sh
+```bash
 lamver -o ./result.csv
 ```

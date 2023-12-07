@@ -36,7 +36,7 @@ Also this tool can support output results **as a CSV file.**
   lamver -h
 
   # To install a specific version of lamver
-  # e.g. version 0.12.1
+  # e.g. version 0.8.0
   curl -fsSL https://raw.githubusercontent.com/go-to-k/lamver/main/install.sh | sh -s "v0.8.0"
   lamver -h
   ```

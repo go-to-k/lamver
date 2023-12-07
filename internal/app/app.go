@@ -18,10 +18,11 @@ import (
 const SDKRetryMaxAttempts = 3
 
 type App struct {
-	Cli               *cli.App
-	Profile           string
-	DefaultRegion     string
-	CSVOutputFilePath string
+	Cli                 *cli.App
+	Profile             string
+	DefaultRegion       string
+	CSVOutputFilePath   string
+	FunctionNameKeyword string
 }
 
 func NewApp(version string) *App {
@@ -48,6 +49,12 @@ func NewApp(version string) *App {
 				Aliases:     []string{"o"},
 				Usage:       "Output file path for CSV format",
 				Destination: &app.CSVOutputFilePath,
+			},
+			&cli.StringFlag{
+				Name:        "keyword",
+				Aliases:     []string{"k"},
+				Usage:       "Keyword for function name filtering (case-insensitive)",
+				Destination: &app.FunctionNameKeyword,
 			},
 		},
 	}
@@ -107,8 +114,13 @@ func (a *App) getAction() func(c *cli.Context) error {
 			return nil
 		}
 
-		keywordLabel := "Filter a keyword of function names(case-insensitive): "
-		keyword := io.InputKeywordForFilter(keywordLabel)
+		var keyword string
+		if a.FunctionNameKeyword != "" {
+			keyword = a.FunctionNameKeyword
+		} else {
+			keywordLabel := "Filter a keyword of function names(case-insensitive): "
+			keyword = io.InputKeywordForFilter(keywordLabel)
+		}
 
 		createFunctionListInput := &action.CreateFunctionListInput{
 			Ctx:           c.Context,

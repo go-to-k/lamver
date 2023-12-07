@@ -54,7 +54,7 @@ Also this tool can support output results **as a CSV file.**
 ## How to use
 
   ```bash
-  lamver [-p <profile>] [-r <default region>] [-o <output file path>]
+  lamver [-p <profile>] [-r <default region>] [-o <output file path>] [-k <keyword for function name>]
   ```
 
 ### options
@@ -66,6 +66,8 @@ Also this tool can support output results **as a CSV file.**
     - The region to output is selected interactively and does not need to be specified.
 - -o, --output: optional
   - Output file path for CSV format
+- -k, --keyword: optional
+  - Keyword for function name filtering (case-insensitive)
 
 ## Input flow
 
@@ -73,6 +75,12 @@ Also this tool can support output results **as a CSV file.**
 
 ```bash
 ❯ lamver
+```
+
+You can specify `-k, --keyword` option. This is a keyword for **function name filtering (case-insensitive)**.
+
+```sh
+❯ lamver -k goto
 ```
 
 ### Choose regions
@@ -114,6 +122,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  java8.al2
   [ ]  java11
   [ ]  java17
+  [ ]  java21
   [ ]  nodejs
   [ ]  nodejs4.3
   [ ]  nodejs4.3-edge
@@ -124,8 +133,10 @@ Also this tool can support output results **as a CSV file.**
   [ ]  nodejs14.x
   [ ]  nodejs16.x
   [ ]  nodejs18.x
+  [ ]  nodejs20.x
   [ ]  provided
   [x]  provided.al2
+  [ ]  provided.al2023
   [ ]  python2.7
   [ ]  python3.6
   [ ]  python3.7
@@ -133,6 +144,7 @@ Also this tool can support output results **as a CSV file.**
   [ ]  python3.9
   [ ]  python3.10
   [ ]  python3.11
+  [ ]  python3.12
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2
@@ -142,7 +154,9 @@ Also this tool can support output results **as a CSV file.**
 
 You can search function names in a **case-insensitive**.
 
-It can be **empty.**
+**Empty** input will output **all functions**.
+
+This phase is skipped if you specify `-k` option.
 
 ```bash
 Filter a keyword of function names(case-insensitive): test-goto

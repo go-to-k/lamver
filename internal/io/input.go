@@ -19,7 +19,7 @@ func GetCheckboxes(label string, opts []string) ([]string, bool) {
 			Options:  opts,
 			PageSize: CheckboxesPageSize,
 		}
-		survey.AskOne(prompt, &checkboxes)
+		survey.AskOne(prompt, &checkboxes, survey.WithKeepFilter(true))
 
 		if len(checkboxes) == 0 {
 			Logger.Warn().Msg("Select values!")

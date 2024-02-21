@@ -119,6 +119,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
 ? Select runtime values you want to search.
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
 > [ ]  dotnet6
+  [ ]  dotnet8
   [ ]  dotnetcore1.0
   [ ]  dotnetcore2.0
   [ ]  dotnetcore2.1

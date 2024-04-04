@@ -155,6 +155,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2
+  [ ]  ruby3.3
 ```
 
 ### Enter part of the function name

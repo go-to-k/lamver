@@ -19,6 +19,7 @@ func GetCheckboxes(label string, opts []string) ([]string, bool) {
 			Options:  opts,
 			PageSize: CheckboxesPageSize,
 		}
+		//nolint:errcheck
 		survey.AskOne(prompt, &checkboxes, survey.WithKeepFilter(true))
 
 		if len(checkboxes) == 0 {

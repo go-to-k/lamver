@@ -154,13 +154,14 @@ func (c *Lambda) compareActualVersion(first string, second string) (hasFinished 
 	secondIntegers := second
 	secondDecimals := ""
 
-	if before, after, ok := strings.Cut(first, "."); ok {
-		firstIntegers = before
-		firstDecimals = after
+	// test
+	if i := strings.Index(first, "."); i >= 0 {
+		firstIntegers = first[:i]
+		firstDecimals = first[i+1:]
 	}
-	if before, after, ok := strings.Cut(second, "."); ok {
-		secondIntegers = before
-		secondDecimals = after
+	if i := strings.Index(second, "."); i >= 0 {
+		secondIntegers = second[:i]
+		secondDecimals = second[i+1:]
 	}
 
 	if firstIntegers != secondIntegers {

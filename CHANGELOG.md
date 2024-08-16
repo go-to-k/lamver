@@ -3,7 +3,7 @@
 ## [v0.14.0](https://github.com/go-to-k/lamver/compare/v0.13.0...v0.14.0) - 2024-08-16
 - ci: use goreleaser v6 by @go-to-k in https://github.com/go-to-k/lamver/pull/231
 
-## [v0.12.2](https://github.com/go-to-k/lamver/compare/v0.12.1...v0.12.2) - 2024-08-16
+## [v0.13.0](https://github.com/go-to-k/lamver/compare/v0.12.1...v0.13.0) - 2024-08-16
 - ci: release on in tagpr by @go-to-k in https://github.com/go-to-k/lamver/pull/229
 
 ## [v0.12.1](https://github.com/go-to-k/lamver/compare/v0.12.0...v0.12.1) - 2024-08-16

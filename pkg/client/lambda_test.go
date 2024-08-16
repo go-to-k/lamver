@@ -20,6 +20,7 @@ func getNextMarkerForInitialize(
 ) (
 	out middleware.InitializeOutput, metadata middleware.Metadata, err error,
 ) {
+	//nolint:gocritic
 	switch v := in.Parameters.(type) {
 	case *lambda.ListFunctionsInput:
 		ctx = middleware.WithStackValue(ctx, markerKey{}, v.Marker)

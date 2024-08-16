@@ -54,7 +54,9 @@ func outputAsCSV(header []string, data [][]string, csvOutputFilePath string) err
 	outputData = append(outputData, header)
 	outputData = append(outputData, data...)
 
-	w.WriteAll(outputData)
+	if err := w.WriteAll(outputData); err != nil {
+		return err
+	}
 
 	if err := w.Error(); err != nil {
 		return err

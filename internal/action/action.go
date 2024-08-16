@@ -89,6 +89,7 @@ func CreateFunctionList(input *CreateFunctionListInput) ([][]string, error) {
 	}
 
 	go func() {
+		//nolint:errcheck
 		eg.Wait()
 		close(functionCh)
 	}()

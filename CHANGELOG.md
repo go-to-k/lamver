@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.12.2](https://github.com/go-to-k/lamver/compare/v0.12.1...v0.12.2) - 2024-08-16
+- ci: release on in tagpr by @go-to-k in https://github.com/go-to-k/lamver/pull/229
+
 ## [v0.12.1](https://github.com/go-to-k/lamver/compare/v0.12.0...v0.12.1) - 2024-08-16
 - chore: change config of brews in .goreleaser.yaml by @go-to-k in https://github.com/go-to-k/lamver/pull/188
 - chore: use new gomock by @go-to-k in https://github.com/go-to-k/lamver/pull/224

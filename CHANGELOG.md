@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.14.2](https://github.com/go-to-k/lamver/compare/v0.14.1...v0.14.2) - 2024-08-16
+- ci: PR-Lint for PR titles by @go-to-k in https://github.com/go-to-k/lamver/pull/235
+
 ## [v0.14.0](https://github.com/go-to-k/lamver/compare/v0.13.0...v0.14.0) - 2024-08-16
 - ci: use goreleaser v6 by @go-to-k in https://github.com/go-to-k/lamver/pull/231
 

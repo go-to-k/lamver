@@ -107,7 +107,8 @@ func (u *UI) View() string {
 
 	s += u.Keyword
 
-	s += color.CyanString(" [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]\n")
+	s += color.CyanString(" [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]")
+	s += "\n"
 
 	for i, choice := range u.Choices {
 		if u.Keyword != "" && !strings.Contains(choice, u.Keyword) {

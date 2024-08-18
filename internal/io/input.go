@@ -10,18 +10,18 @@ import (
 	"github.com/fatih/color"
 )
 
-func GetCheckboxes(header string, opts []string) ([]string, bool, error) {
+func GetCheckboxes(headers []string, opts []string) ([]string, bool, error) {
 	for {
-		ui := NewUI(opts, header)
+		ui := NewUI(opts, headers)
 		p := tea.NewProgram(ui)
 		if _, err := p.Run(); err != nil {
 			return nil, false, err
 		}
 
-		var checkboxes []string
+		checkboxes := []string{}
 		for c := range ui.Choices {
 			if _, ok := ui.Selected[c]; ok {
-				checkboxes = append(checkboxes, opts[c])
+				checkboxes = append(checkboxes, ui.Choices[c])
 			}
 		}
 

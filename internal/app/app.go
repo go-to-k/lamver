@@ -102,7 +102,7 @@ func (a *App) getAction() func(c *cli.Context) error {
 			return err
 		}
 
-		regionsLabel := "Select regions you want to search.\n"
+		regionsLabel := []string{"Select regions you want to search."}
 		targetRegions, continuation, err := io.GetCheckboxes(regionsLabel, allRegions)
 		if err != nil {
 			return err
@@ -111,7 +111,7 @@ func (a *App) getAction() func(c *cli.Context) error {
 			return nil
 		}
 
-		runtimeLabel := "Select runtime values you want to search.\n"
+		runtimeLabel := []string{"Select runtime values you want to search."}
 		targetRuntime, continuation, err := io.GetCheckboxes(runtimeLabel, allRuntime)
 		if err != nil {
 			return err

@@ -26,7 +26,6 @@ func GetCheckboxes(header string, opts []string) ([]string, bool, error) {
 		}
 
 		if len(checkboxes) == 0 {
-			Logger.Warn().Msg("Select values!")
 			ok := GetYesNo("Do you want to finish?")
 			if ok {
 				Logger.Info().Msg("Finished...")

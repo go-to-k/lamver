@@ -6,35 +6,45 @@ import (
 	"os"
 	"strings"
 
-	"github.com/AlecAivazis/survey/v2"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/fatih/color"
 )
 
-const CheckboxesPageSize = 50
-
-func GetCheckboxes(label string, opts []string) ([]string, bool) {
+func GetCheckboxes(headers []string, opts []string) ([]string, bool, error) {
 	for {
-		var checkboxes []string
-		prompt := &survey.MultiSelect{
-			Message:  label,
-			Options:  opts,
-			PageSize: CheckboxesPageSize,
+		ui := NewUI(opts, headers)
+		p := tea.NewProgram(ui)
+		if _, err := p.Run(); err != nil {
+			return nil, false, err
 		}
-		//nolint:errcheck
-		survey.AskOne(prompt, &checkboxes, survey.WithKeepFilter(true))
 
-		if len(checkboxes) == 0 {
-			Logger.Warn().Msg("Select values!")
+		checkboxes := []string{}
+		for c := range ui.Choices {
+			if _, ok := ui.Selected[c]; ok {
+				checkboxes = append(checkboxes, ui.Choices[c])
+			}
+		}
+
+		switch {
+		case ui.IsCanceled:
+			Logger.Warn().Msg("Canceled!")
+		case len(checkboxes) == 0:
+			Logger.Warn().Msg("Not selected!")
+		}
+		if len(checkboxes) == 0 || ui.IsCanceled {
 			ok := GetYesNo("Do you want to finish?")
 			if ok {
 				Logger.Info().Msg("Finished...")
-				return checkboxes, false
+				return checkboxes, false, nil
 			}
 			continue
 		}
 
+		fmt.Fprintf(os.Stderr, " %s\n", color.CyanString(strings.Join(checkboxes, ", ")))
+
 		ok := GetYesNo("OK?")
 		if ok {
-			return checkboxes, true
+			return checkboxes, true, nil
 		}
 	}
 }

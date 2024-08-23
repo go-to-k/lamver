@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.15.0](https://github.com/go-to-k/lamver/compare/v0.14.2...v0.15.0) - 2024-08-23
+- ci: tweak for pr-lint by @go-to-k in https://github.com/go-to-k/lamver/pull/237
+- ci: Manage labels in PR lint by @go-to-k in https://github.com/go-to-k/lamver/pull/239
+- ci: tweak for semantic-pull-request workflow by @go-to-k in https://github.com/go-to-k/lamver/pull/240
+- ci: fix bug that labels are not created by @go-to-k in https://github.com/go-to-k/lamver/pull/242
+- ci: ignore lint on tagpr PR by @go-to-k in https://github.com/go-to-k/lamver/pull/243
+- ci: add revert type in prlint by @go-to-k in https://github.com/go-to-k/lamver/pull/244
+- ci: change token for tagpr by @go-to-k in https://github.com/go-to-k/lamver/pull/246
+- ci: don't run CI in PR actions by @go-to-k in https://github.com/go-to-k/lamver/pull/247
+- ci: add error linters by @go-to-k in https://github.com/go-to-k/lamver/pull/245
+- feat(io): redesign UI implementation with a new library by @go-to-k in https://github.com/go-to-k/lamver/pull/241
+
 ## [v0.14.2](https://github.com/go-to-k/lamver/compare/v0.14.1...v0.14.2) - 2024-08-16
 - ci: PR-Lint for PR titles by @go-to-k in https://github.com/go-to-k/lamver/pull/235
 

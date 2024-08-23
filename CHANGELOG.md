@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.15.1](https://github.com/go-to-k/lamver/compare/v0.15.0...v0.15.1) - 2024-08-23
+- ci: change token for tagpr by @go-to-k in https://github.com/go-to-k/lamver/pull/248
+
 ## [v0.15.0](https://github.com/go-to-k/lamver/compare/v0.14.2...v0.15.0) - 2024-08-23
 - ci: tweak for pr-lint by @go-to-k in https://github.com/go-to-k/lamver/pull/237
 - ci: Manage labels in PR lint by @go-to-k in https://github.com/go-to-k/lamver/pull/239

@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.16.0](https://github.com/go-to-k/lamver/compare/v0.15.1...v0.16.0) - 2024-11-13
+- ci: change PR label names for release by @go-to-k in https://github.com/go-to-k/lamver/pull/251
+- docs: improve style for README by @go-to-k in https://github.com/go-to-k/lamver/pull/250
+- feat: support python 3.13 by @go-to-k in https://github.com/go-to-k/lamver/pull/253
+
 ## [v0.15.1](https://github.com/go-to-k/lamver/compare/v0.15.0...v0.15.1) - 2024-08-23
 - ci: change token for tagpr by @go-to-k in https://github.com/go-to-k/lamver/pull/248
 

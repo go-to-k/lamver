@@ -152,6 +152,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  python3.10
   [ ]  python3.11
   [ ]  python3.12
+  [ ]  python3.13
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2

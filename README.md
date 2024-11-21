@@ -141,6 +141,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  nodejs16.x
   [ ]  nodejs18.x
   [ ]  nodejs20.x
+  [ ]  nodejs22.x
   [ ]  provided
   [x]  provided.al2
   [ ]  provided.al2023

@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.17.0](https://github.com/go-to-k/lamver/compare/v0.16.0...v0.17.0) - 2024-11-21
+- feat: support nodejs 22 by @go-to-k in https://github.com/go-to-k/lamver/pull/254
+
 ## [v0.16.0](https://github.com/go-to-k/lamver/compare/v0.15.1...v0.16.0) - 2024-11-13
 - ci: change PR label names for release by @go-to-k in https://github.com/go-to-k/lamver/pull/251
 - docs: improve style for README by @go-to-k in https://github.com/go-to-k/lamver/pull/250

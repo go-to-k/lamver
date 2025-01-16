@@ -21,6 +21,8 @@ This will allow you can see the following.
 
 Also this tool can support output results **as a CSV file.**
 
+![lamver](https://github.com/user-attachments/assets/af374bfd-b23f-48ee-bfae-d4194f7000ae)
+
 ## Install
 
 - Homebrew

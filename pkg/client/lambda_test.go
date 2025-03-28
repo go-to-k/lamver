@@ -636,6 +636,7 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 				"ruby2.7",
 				"ruby3.2",
 				"ruby3.3",
+				"ruby3.4",
 			},
 		},
 	}

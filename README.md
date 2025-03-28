@@ -160,6 +160,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  ruby2.7
   [ ]  ruby3.2
   [ ]  ruby3.3
+  [ ]  ruby3.4
 ```
 
 ### Enter part of the function name

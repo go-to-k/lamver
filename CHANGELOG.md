@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.18.1](https://github.com/go-to-k/lamver/compare/v0.18.0...v0.18.1) - 2025-03-29
+- chore: migrate golangci to v2 by @go-to-k in https://github.com/go-to-k/lamver/pull/259
+
 ## [v0.18.0](https://github.com/go-to-k/lamver/compare/v0.17.0...v0.18.0) - 2025-03-28
 - docs: add gif in README by @go-to-k in https://github.com/go-to-k/lamver/pull/256
 - feat: support ruby 3.4 by @go-to-k in https://github.com/go-to-k/lamver/pull/258

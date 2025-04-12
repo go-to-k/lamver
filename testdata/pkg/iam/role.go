@@ -211,28 +211,6 @@ func DeleteResources(ctx context.Context, profile string) error {
 
 // Get AWS account ID
 func getAccountID(ctx context.Context, cfg aws.Config) string {
-	client := iam.NewFromConfig(cfg)
-
-	// Try GetUser
-	result, err := client.GetUser(ctx, &iam.GetUserInput{})
-	if err == nil && result.User != nil && result.User.Arn != nil {
-		// Extract account ID from ARN
-		arn := *result.User.Arn
-		for i := 0; i < len(arn); i++ {
-			if arn[i] == ':' {
-				if i+1 < len(arn) && arn[i+1] == ':' {
-					start := i + 2
-					for j := start; j < len(arn); j++ {
-						if arn[j] == ':' {
-							return arn[start:j]
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Try GetCallerIdentity
 	stsClient := sts.NewFromConfig(cfg)
 	identity, err := stsClient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
 	if err == nil && identity.Account != nil {

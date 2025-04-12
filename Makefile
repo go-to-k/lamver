@@ -53,3 +53,26 @@ install:
 clean:
 	go clean
 	rm -f lamver
+
+# Test data generation commands
+# ==================================
+
+# Run test functions generator
+testgen:
+	@echo "Running test functions generator..."
+	@cd testdata && go mod tidy && go run cmd/create/main.go $(OPT)
+
+# Clean test functions
+testgen_clean:
+	@echo "Cleaning test functions..."
+	@cd testdata && go mod tidy && go run cmd/delete/main.go $(OPT)
+
+# Help for test functions generation
+testgen_help:
+	@echo "Test functions generation targets:"
+	@echo "  testgen         - Run the test functions generator"
+	@echo "  testgen_clean   - Clean test functions"
+	@echo ""
+	@echo "Example usage:"
+	@echo "  make testgen OPT=\"-p myprofile\""
+	@echo "  make testgen_clean OPT=\"-p myprofile\""

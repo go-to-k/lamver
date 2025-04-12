@@ -76,5 +76,6 @@ testgen_help:
 	@echo "  testgen_clean   - Clean test functions"
 	@echo ""
 	@echo "Example usage:"
+	@echo "  make testgen"
 	@echo "  make testgen OPT=\"-p myprofile\""
 	@echo "  make testgen_clean OPT=\"-p myprofile\""

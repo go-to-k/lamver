@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-to-k/lamver/testdata/pkg/aws"
 	"github.com/go-to-k/lamver/testdata/pkg/iam"
@@ -31,6 +32,10 @@ func main() {
 	}
 
 	fmt.Printf("Created/Reused IAM Role: %s\n", roleARN)
+
+	// Wait for role propagation
+	fmt.Println("Waiting for IAM role propagation (3 seconds)...")
+	time.Sleep(3 * time.Second)
 
 	// Create Lambda functions for each region and runtime combination
 	for _, region := range aws.Regions {

@@ -2,6 +2,8 @@ RED=\033[31m
 GREEN=\033[32m
 RESET=\033[0m
 
+.PHONY: test_diff test test_view lint lint_diff mockgen deadcode shadow cognit run build install clean testgen testgen_clean testgen_help
+
 COLORIZE_PASS = sed "s/^\([- ]*\)\(PASS\)/\1$$(printf "$(GREEN)")\2$$(printf "$(RESET)")/g"
 COLORIZE_FAIL = sed "s/^\([- ]*\)\(FAIL\)/\1$$(printf "$(RED)")\2$$(printf "$(RESET)")/g"
 
@@ -53,3 +55,27 @@ install:
 clean:
 	go clean
 	rm -f lamver
+
+# Test data generation commands
+# ==================================
+
+# Run test functions generator
+testgen:
+	@echo "Running test functions generator..."
+	@cd testdata && go mod tidy && go run cmd/create/main.go $(OPT)
+
+# Clean test functions
+testgen_clean:
+	@echo "Cleaning test functions..."
+	@cd testdata && go mod tidy && go run cmd/delete/main.go $(OPT)
+
+# Help for test functions generation
+testgen_help:
+	@echo "Test functions generation targets:"
+	@echo "  testgen         - Run the test functions generator"
+	@echo "  testgen_clean   - Clean test functions"
+	@echo ""
+	@echo "Example usage:"
+	@echo "  make testgen"
+	@echo "  make testgen OPT=\"-p myprofile\""
+	@echo "  make testgen_clean OPT=\"-p myprofile\""

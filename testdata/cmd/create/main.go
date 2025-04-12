@@ -34,8 +34,8 @@ func main() {
 	fmt.Printf("Created/Reused IAM Role: %s\n", roleARN)
 
 	// Wait for role propagation
-	fmt.Println("Waiting for IAM role propagation (3 seconds)...")
-	time.Sleep(3 * time.Second)
+	fmt.Println("Waiting for IAM role propagation (10 seconds)...")
+	time.Sleep(10 * time.Second)
 
 	// Create Lambda functions for each region and runtime combination
 	for _, region := range aws.Regions {

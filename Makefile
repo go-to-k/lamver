@@ -2,6 +2,8 @@ RED=\033[31m
 GREEN=\033[32m
 RESET=\033[0m
 
+.PHONY: test_diff test test_view lint lint_diff mockgen deadcode shadow cognit run build install clean testgen testgen_clean testgen_help
+
 COLORIZE_PASS = sed "s/^\([- ]*\)\(PASS\)/\1$$(printf "$(GREEN)")\2$$(printf "$(RESET)")/g"
 COLORIZE_FAIL = sed "s/^\([- ]*\)\(FAIL\)/\1$$(printf "$(RED)")\2$$(printf "$(RESET)")/g"
 

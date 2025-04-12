@@ -13,6 +13,7 @@ These scripts are used for testing the lamver tool.
 ## Usage
 
 ### Prerequisites
+
 - AWS credentials configured (with appropriate IAM permissions)
 - Go runtime environment
 

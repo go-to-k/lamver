@@ -69,13 +69,20 @@ def lambda_handler(event, context):
 // List of runtimes
 var Runtimes = map[string]RuntimeInfo{
 	"go1": {
-		Runtime:  types.RuntimeProvidedal2,
+		Runtime:  types.RuntimeProvidedal2023,
 		Source:   lambdaSourceGo,
 		Handler:  "main",
 		FileExt:  ".go",
 		FileName: "main.go",
 	},
 	"go2": {
+		Runtime:  types.RuntimeProvidedal2,
+		Source:   lambdaSourceGo,
+		Handler:  "main",
+		FileExt:  ".go",
+		FileName: "main.go",
+	},
+	"go3": {
 		Runtime:  types.RuntimeProvidedal2023,
 		Source:   lambdaSourceGo,
 		Handler:  "main",
@@ -83,13 +90,20 @@ var Runtimes = map[string]RuntimeInfo{
 		FileName: "main.go",
 	},
 	"nodejs1": {
-		Runtime:  types.RuntimeNodejs20x,
+		Runtime:  types.RuntimeNodejs22x,
 		Source:   lambdaSourceNode,
 		Handler:  "index.handler",
 		FileExt:  ".js",
 		FileName: "index.js",
 	},
 	"nodejs2": {
+		Runtime:  types.RuntimeNodejs20x,
+		Source:   lambdaSourceNode,
+		Handler:  "index.handler",
+		FileExt:  ".js",
+		FileName: "index.js",
+	},
+	"nodejs3": {
 		Runtime:  types.RuntimeNodejs22x,
 		Source:   lambdaSourceNode,
 		Handler:  "index.handler",
@@ -97,13 +111,20 @@ var Runtimes = map[string]RuntimeInfo{
 		FileName: "index.js",
 	},
 	"python1": {
-		Runtime:  types.RuntimePython312,
+		Runtime:  types.RuntimePython313,
 		Source:   lambdaSourcePython,
 		Handler:  "lambda_function.lambda_handler",
 		FileExt:  ".py",
 		FileName: "lambda_function.py",
 	},
 	"python2": {
+		Runtime:  types.RuntimePython312,
+		Source:   lambdaSourcePython,
+		Handler:  "lambda_function.lambda_handler",
+		FileExt:  ".py",
+		FileName: "lambda_function.py",
+	},
+	"python3": {
 		Runtime:  types.RuntimePython313,
 		Source:   lambdaSourcePython,
 		Handler:  "lambda_function.lambda_handler",

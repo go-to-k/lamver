@@ -45,13 +45,19 @@ func main() {
 			funcName := fmt.Sprintf("%s-%s-%s", lambda.FunctionName, region, runtimeName)
 
 			// Create Lambda function
-			_, err = lambda.CreateFunction(context.TODO(), cfg, funcName, roleARN, runtimeInfo)
+			isNew, err := lambda.CreateFunction(context.TODO(), cfg, funcName, roleARN, runtimeInfo)
 			if err != nil {
 				log.Fatalf("Failed to create Lambda function (%s, %s): %v", region, runtimeName, err)
 			}
 
-			fmt.Printf("Lambda function '%s' successfully created in %s region (runtime: %s)\n",
-				funcName, region, runtimeInfo.Runtime)
+			// Different message based on whether the function already existed or was newly created
+			if isNew {
+				fmt.Printf("Lambda function '%s' successfully created in %s region (runtime: %s)\n",
+					funcName, region, runtimeInfo.Runtime)
+			} else {
+				fmt.Printf("Lambda function '%s' already exists in %s region (runtime: %s) - reusing\n",
+					funcName, region, runtimeInfo.Runtime)
+			}
 
 			// Store function info for display
 			createdFunctions = append(createdFunctions, fmt.Sprintf("%s (Region: %s, Runtime: %s)",

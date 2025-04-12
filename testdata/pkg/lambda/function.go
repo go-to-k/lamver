@@ -19,30 +19,29 @@ func Int32(v int32) *int32 {
 }
 
 // Create Lambda function
-func CreateFunction(ctx context.Context, cfg aws.Config, funcName, roleARN string, runtimeInfo RuntimeInfo) (string, error) {
+func CreateFunction(ctx context.Context, cfg aws.Config, funcName, roleARN string, runtimeInfo RuntimeInfo) (bool, error) {
 	// Create Lambda client
 	client := lambda.NewFromConfig(cfg)
 
 	// Check if function already exists
-	getOutput, err := client.GetFunction(ctx, &lambda.GetFunctionInput{
+	_, err := client.GetFunction(ctx, &lambda.GetFunctionInput{
 		FunctionName: aws.String(funcName),
 	})
 
 	// If function exists, return without error
 	if err == nil {
-		lastModified := getOutput.Configuration.LastModified
-		fmt.Printf("Lambda function '%s' already exists, reusing it\n", funcName)
-		return *lastModified, nil
+		// Return false to indicate the function already existed
+		return false, nil
 	}
 
 	// Compress Lambda function source code into a ZIP file
 	zipBytes, err := createZip(runtimeInfo)
 	if err != nil {
-		return "", fmt.Errorf("failed to create ZIP file: %w", err)
+		return false, fmt.Errorf("failed to create ZIP file: %w", err)
 	}
 
 	// Create Lambda function
-	createOutput, err := client.CreateFunction(ctx, &lambda.CreateFunctionInput{
+	_, err = client.CreateFunction(ctx, &lambda.CreateFunctionInput{
 		Code: &types.FunctionCode{
 			ZipFile: zipBytes,
 		},
@@ -55,10 +54,11 @@ func CreateFunction(ctx context.Context, cfg aws.Config, funcName, roleARN strin
 	})
 
 	if err != nil {
-		return "", err
+		return false, err
 	}
 
-	return *createOutput.LastModified, nil
+	// Return true to indicate the function was newly created
+	return true, nil
 }
 
 // Delete Lambda function

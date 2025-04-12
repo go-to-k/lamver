@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	RoleName   = "lamver-test-role"
-	PolicyName = "lamver-test-policy"
+	RoleName         = "lamver-test-role"
+	PolicyName       = "lamver-test-policy"
+	ManagedPolicyARN = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 )
 
 // IAM role policy document
@@ -62,13 +63,13 @@ func CreateRole(ctx context.Context, cfg aws.Config) (string, error) {
 		roleArn = *existingRole.Role.Arn
 	} else {
 		// Create role if it doesn't exist
-		roleOutput, err := client.CreateRole(ctx, &iam.CreateRoleInput{
+		roleOutput, createErr := client.CreateRole(ctx, &iam.CreateRoleInput{
 			RoleName:                 aws.String(RoleName),
 			AssumeRolePolicyDocument: aws.String(assumeRolePolicyDocument),
 			Description:              aws.String("Role for lamver testing"),
 		})
-		if err != nil {
-			return "", fmt.Errorf("failed to create role: %w", err)
+		if createErr != nil {
+			return "", fmt.Errorf("failed to create role: %w", createErr)
 		}
 		roleArn = *roleOutput.Role.Arn
 	}
@@ -84,13 +85,13 @@ func CreateRole(ctx context.Context, cfg aws.Config) (string, error) {
 
 	// Create policy if it doesn't exist
 	if policyErr != nil {
-		policyOutput, err := client.CreatePolicy(ctx, &iam.CreatePolicyInput{
+		policyOutput, createErr := client.CreatePolicy(ctx, &iam.CreatePolicyInput{
 			PolicyName:     aws.String(PolicyName),
 			PolicyDocument: aws.String(lambdaExecutionPolicyDocument),
 			Description:    aws.String("Policy for lamver testing"),
 		})
-		if err != nil {
-			return "", fmt.Errorf("failed to create policy: %w", err)
+		if createErr != nil {
+			return "", fmt.Errorf("failed to create policy: %w", createErr)
 		}
 		customPolicyArn = *policyOutput.Policy.Arn
 	} else {
@@ -107,7 +108,7 @@ func CreateRole(ctx context.Context, cfg aws.Config) (string, error) {
 		for _, policy := range attachedPolicies.AttachedPolicies {
 			if *policy.PolicyArn == customPolicyArn {
 				customPolicyAttached = true
-			} else if *policy.PolicyArn == "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole" {
+			} else if *policy.PolicyArn == ManagedPolicyARN {
 				awsManagedPolicyAttached = true
 			}
 		}
@@ -128,7 +129,7 @@ func CreateRole(ctx context.Context, cfg aws.Config) (string, error) {
 	if !awsManagedPolicyAttached {
 		_, err = client.AttachRolePolicy(ctx, &iam.AttachRolePolicyInput{
 			RoleName:  aws.String(RoleName),
-			PolicyArn: aws.String("arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"),
+			PolicyArn: aws.String(ManagedPolicyARN),
 		})
 		if err != nil {
 			return "", fmt.Errorf("failed to attach AWS managed policy: %w", err)
@@ -177,7 +178,7 @@ func DeleteResources(ctx context.Context, profile string) error {
 	// Detach AWS managed policy
 	_, err = client.DetachRolePolicy(ctx, &iam.DetachRolePolicyInput{
 		RoleName:  aws.String(RoleName),
-		PolicyArn: aws.String("arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"),
+		PolicyArn: aws.String(ManagedPolicyARN),
 	})
 	if err != nil {
 		log.Printf("Warning: Failed to detach AWS managed policy: %v", err)

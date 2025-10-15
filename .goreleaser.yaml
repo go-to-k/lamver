@@ -43,3 +43,5 @@ brews:
     description: lamver
     test: |
       system "#{bin}/lamver -v"
+release:
+  use_existing_draft: true

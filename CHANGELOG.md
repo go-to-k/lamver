@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.18.1](https://github.com/go-to-k/lamver/compare/v0.18.0...v0.18.1) - 2025-10-15
+- chore: migrate golangci to v2 by @go-to-k in https://github.com/go-to-k/lamver/pull/259
+- test: scripts for creation and deletion of test functions with golang by @go-to-k in https://github.com/go-to-k/lamver/pull/261
+- test(version): comment out version tests by @go-to-k in https://github.com/go-to-k/lamver/pull/263
+- ci: enable immutable releases by @go-to-k in https://github.com/go-to-k/lamver/pull/264
+
 ## [v0.18.0](https://github.com/go-to-k/lamver/compare/v0.17.0...v0.18.0) - 2025-03-28
 - docs: add gif in README by @go-to-k in https://github.com/go-to-k/lamver/pull/256
 - feat: support ruby 3.4 by @go-to-k in https://github.com/go-to-k/lamver/pull/258

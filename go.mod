@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.28.3
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.187.1
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.71.0
-	github.com/aws/smithy-go v1.22.2
+	github.com/aws/smithy-go v1.23.1
 	github.com/charmbracelet/bubbletea v0.27.0
 	github.com/fatih/color v1.17.0
 	github.com/olekukonko/tablewriter v0.0.5

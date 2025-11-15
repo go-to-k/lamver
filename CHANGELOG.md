@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.19.0](https://github.com/go-to-k/lamver/compare/v0.18.1...v0.19.0) - 2025-11-15
+- chore: change reviewdog settings in CI by @go-to-k in https://github.com/go-to-k/lamver/pull/287
+- feat: support nodejs24.x, python3.14 and java25 by @go-to-k in https://github.com/go-to-k/lamver/pull/289
+
 ## [v0.18.1](https://github.com/go-to-k/lamver/compare/v0.18.0...v0.18.1) - 2025-10-15
 - chore: migrate golangci to v2 by @go-to-k in https://github.com/go-to-k/lamver/pull/259
 - test: scripts for creation and deletion of test functions with golang by @go-to-k in https://github.com/go-to-k/lamver/pull/261

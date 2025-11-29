@@ -15,7 +15,7 @@ require (
 	github.com/urfave/cli/v2 v2.25.0
 	go.uber.org/goleak v1.3.0
 	go.uber.org/mock v0.4.0
-	golang.org/x/sync v0.8.0
+	golang.org/x/sync v0.18.0
 )
 
 require (

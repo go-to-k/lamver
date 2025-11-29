@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.20.0](https://github.com/go-to-k/lamver/compare/v0.19.0...v0.20.0) - 2025-11-29
+- feat: support `aws login` by @go-to-k in https://github.com/go-to-k/lamver/pull/296
+- chore(deps): bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/295
+- chore(deps): bump actions/upload-artifact from 4 to 5 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/284
+- chore(deps): bump actions/setup-go from 5 to 6 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/267
+- chore(deps): bump amannn/action-semantic-pull-request from 5 to 6 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/266
+- chore(deps): bump github.com/charmbracelet/bubbletea from 0.27.0 to 1.3.10 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/291
+- chore(deps): bump golang.org/x/sync from 0.8.0 to 0.18.0 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/293
+- chore(deps): bump github.com/aws/aws-sdk-go-v2/service/ec2 from 1.187.1 to 1.269.0 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/294
+- chore(deps): bump go.uber.org/mock from 0.4.0 to 0.6.0 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/292
+- chore(deps): bump github.com/fatih/color from 1.17.0 to 1.18.0 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/290
+
 ## [v0.19.0](https://github.com/go-to-k/lamver/compare/v0.18.1...v0.19.0) - 2025-11-15
 - chore: change reviewdog settings in CI by @go-to-k in https://github.com/go-to-k/lamver/pull/287
 - feat: support nodejs24.x, python3.14 and java25 by @go-to-k in https://github.com/go-to-k/lamver/pull/289

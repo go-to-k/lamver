@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.40.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.2
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.275.0
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.81.3
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.84.0
 	github.com/aws/smithy-go v1.23.2
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/fatih/color v1.18.0

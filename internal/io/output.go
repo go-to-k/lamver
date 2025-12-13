@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/tw"
 )
 
 func OutputResult(functionHeader []string, functionData [][]string, csvOutputFilePath string) error {
@@ -27,12 +28,35 @@ func OutputResult(functionHeader []string, functionData [][]string, csvOutputFil
 
 func outputAsTable(header []string, data [][]string) error {
 	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(header)
-	table.SetRowLine(true)
-	table.SetAutoWrapText(false)
-	table.AppendBulk(data)
-	table.Render()
+	table := tablewriter.NewTable(tableString,
+		tablewriter.WithRendition(
+			tw.Rendition{
+				Symbols: tw.NewSymbols(tw.StyleASCII),
+				Borders: tw.Border{
+					Top:    tw.On,
+					Bottom: tw.On,
+					Left:   tw.On,
+					Right:  tw.On,
+				},
+				Settings: tw.Settings{
+					Separators: tw.Separators{
+						BetweenRows: tw.On,
+					},
+					Lines: tw.Lines{
+						ShowHeaderLine: tw.On,
+					},
+				},
+			},
+		),
+	)
+
+	table.Header(header)
+	if err := table.Bulk(data); err != nil {
+		return err
+	}
+	if err := table.Render(); err != nil {
+		return err
+	}
 
 	stringAsTableFormat := tableString.String()
 

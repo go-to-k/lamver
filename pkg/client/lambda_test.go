@@ -598,6 +598,7 @@ func TestLambda_ListRuntimeValues(t *testing.T) {
 			want: []string{
 				"dotnet6",
 				"dotnet8",
+				"dotnet10",
 				"dotnetcore1.0",
 				"dotnetcore2.0",
 				"dotnetcore2.1",

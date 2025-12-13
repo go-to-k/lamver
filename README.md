@@ -122,6 +122,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
 > [ ]  dotnet6
   [ ]  dotnet8
+  [ ]  dotnet10
   [ ]  dotnetcore1.0
   [ ]  dotnetcore2.0
   [ ]  dotnetcore2.1
@@ -132,6 +133,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  java11
   [ ]  java17
   [ ]  java21
+  [ ]  java25
   [ ]  nodejs
   [ ]  nodejs4.3
   [ ]  nodejs4.3-edge
@@ -144,6 +146,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  nodejs18.x
   [ ]  nodejs20.x
   [ ]  nodejs22.x
+  [ ]  nodejs24.x
   [ ]  provided
   [x]  provided.al2
   [ ]  provided.al2023
@@ -156,6 +159,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  python3.11
   [ ]  python3.12
   [ ]  python3.13
+  [ ]  python3.14
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2

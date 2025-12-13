@@ -51,8 +51,12 @@ func outputAsTable(header []string, data [][]string) error {
 	)
 
 	table.Header(header)
-	table.Bulk(data)
-	table.Render()
+	if err := table.Bulk(data); err != nil {
+		return err
+	}
+	if err := table.Render(); err != nil {
+		return err
+	}
 
 	stringAsTableFormat := tableString.String()
 

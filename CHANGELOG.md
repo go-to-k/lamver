@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.21.0](https://github.com/go-to-k/lamver/compare/v0.20.0...v0.21.0) - 2025-12-13
+- feat: support dotnet10 by @go-to-k in https://github.com/go-to-k/lamver/pull/304
+- chore(deps): bump actions/cache from 4 to 5 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/303
+- chore(deps): bump github.com/olekukonko/tablewriter from 0.0.5 to 1.1.2 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/298
+- revert: "chore(deps): bump github.com/olekukonko/tablewriter from 0.05 to 1.1.2 (#298)" by @go-to-k in https://github.com/go-to-k/lamver/pull/306
+- chore(deps): bump github.com/urfave/cli/v2 from 2.25.0 to 2.27.7 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/301
+- chore(deps): bump github.com/rs/zerolog from 1.33.0 to 1.34.0 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/299
+- chore(deps): upgrade tablewriter to v1 by @go-to-k in https://github.com/go-to-k/lamver/pull/307
+
 ## [v0.20.0](https://github.com/go-to-k/lamver/compare/v0.19.0...v0.20.0) - 2025-11-29
 - feat: support `aws login` by @go-to-k in https://github.com/go-to-k/lamver/pull/296
 - chore(deps): bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/295

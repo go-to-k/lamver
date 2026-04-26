@@ -49,6 +49,12 @@ Also this tool can support output results **as a CSV file.**
   aqua g -i go-to-k/lamver
   ```
 
+- mise
+
+  ```bash
+  mise use -g aqua:go-to-k/lamver
+  ```
+
 - Binary
   - [Releases](https://github.com/go-to-k/lamver/releases)
 - Git Clone and install(for developers)

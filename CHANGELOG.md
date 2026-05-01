@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.22.0](https://github.com/go-to-k/lamver/compare/v0.21.0...v0.22.0) - 2026-05-01
+- docs: add mise to install methods by @go-to-k in https://github.com/go-to-k/lamver/pull/340
+- feat: support ruby4.0 by @go-to-k in https://github.com/go-to-k/lamver/pull/342
+
 ## [v0.21.0](https://github.com/go-to-k/lamver/compare/v0.20.0...v0.21.0) - 2025-12-13
 - feat: support dotnet10 by @go-to-k in https://github.com/go-to-k/lamver/pull/304
 - chore(deps): bump actions/cache from 4 to 5 by @dependabot[bot] in https://github.com/go-to-k/lamver/pull/303

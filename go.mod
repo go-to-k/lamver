@@ -1,6 +1,6 @@
 module github.com/go-to-k/lamver
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.7
@@ -15,7 +15,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	go.uber.org/goleak v1.3.0
 	go.uber.org/mock v0.6.0
-	golang.org/x/sync v0.18.0
+	golang.org/x/sync v0.20.0
 )
 
 require (

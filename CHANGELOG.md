@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.23.1](https://github.com/go-to-k/lamver/compare/v0.23.0...v0.23.1) - 2026-10-23
+
+- chore: build with Go 1.27.3 to distrust compromised eMudhra CAs by @go-to-k in https://github.com/go-to-k/lamver/pull/346
+
 ## [v0.23.0](https://github.com/go-to-k/lamver/compare/v0.22.0...v0.23.0) - 2026-07-15
 
 - ci: fix branch filter to match branches with slashes by @go-to-k in https://github.com/go-to-k/lamver/pull/343

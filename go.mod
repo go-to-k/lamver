@@ -3,11 +3,11 @@ module github.com/go-to-k/lamver
 go 1.27.3
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.42.1
+	github.com/aws/aws-sdk-go-v2 v1.47.5
 	github.com/aws/aws-sdk-go-v2/config v1.32.2
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.275.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.99.0
-	github.com/aws/smithy-go v1.27.3
+	github.com/aws/smithy-go v1.28.7
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/fatih/color v1.18.0
 	github.com/olekukonko/tablewriter v1.1.2

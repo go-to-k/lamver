@@ -2,6 +2,10 @@ RED=\033[31m
 GREEN=\033[32m
 RESET=\033[0m
 
+# Run exactly the golangci-lint version pinned in .golangci-version (shared with CI)
+# instead of whatever is on PATH. `go run` caches the build after the first run.
+GOLANGCI_LINT := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(shell cat .golangci-version)
+
 .PHONY: test_diff test test_view lint lint_diff mockgen deadcode shadow cognit run build install clean testgen testgen_clean testgen_help
 
 COLORIZE_PASS = sed "s/^\([- ]*\)\(PASS\)/\1$$(printf "$(GREEN)")\2$$(printf "$(RESET)")/g"
@@ -33,9 +37,9 @@ test_view:
 	go tool cover -func=cover.out
 	go tool cover -html=cover.out -o cover.html
 lint:
-	golangci-lint run
+	$(GOLANGCI_LINT) run
 lint_diff:
-	golangci-lint run $$(echo $(DIFF_FILE))
+	$(GOLANGCI_LINT) run $$(echo $(DIFF_FILE))
 mockgen:
 	go generate ./...
 deadcode:

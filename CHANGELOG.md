@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.24.0](https://github.com/go-to-k/lamver/compare/v0.23.1...v0.24.0) - 2026-11-11
+
+- ci: hold Dependabot version updates back for 7 days after a release by @go-to-k in https://github.com/go-to-k/lamver/pull/348
+- chore: pin mockgen and golangci-lint versions in the repository by @go-to-k in https://github.com/go-to-k/lamver/pull/358
+- feat: support nodejs26.x and python3.15 by @go-to-k in https://github.com/go-to-k/lamver/pull/359
+
 ## [v0.23.1](https://github.com/go-to-k/lamver/compare/v0.23.0...v0.23.1) - 2026-10-23
 
 - chore: build with Go 1.27.3 to distrust compromised eMudhra CAs by @go-to-k in https://github.com/go-to-k/lamver/pull/346

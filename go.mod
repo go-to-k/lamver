@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.114.4
 	github.com/aws/smithy-go v1.28.9
 	github.com/charmbracelet/bubbletea v1.3.10
-	github.com/fatih/color v1.18.0
+	github.com/fatih/color v1.19.0
 	github.com/olekukonko/tablewriter v1.1.2
 	github.com/rs/zerolog v1.34.0
 	github.com/urfave/cli/v2 v2.27.7
@@ -43,7 +43,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.19 // indirect
@@ -58,7 +58,7 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/mod v0.27.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.3.8 // indirect
 	golang.org/x/tools v0.36.0 // indirect
 )

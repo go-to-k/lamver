@@ -156,6 +156,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  nodejs20.x
   [ ]  nodejs22.x
   [ ]  nodejs24.x
+  [ ]  nodejs26.x
   [ ]  provided
   [x]  provided.al2
   [ ]  provided.al2023
@@ -169,6 +170,7 @@ You can specify `-k, --keyword` option. This is a keyword for **function name fi
   [ ]  python3.12
   [ ]  python3.13
   [ ]  python3.14
+  [ ]  python3.15
   [ ]  ruby2.5
   [ ]  ruby2.7
   [ ]  ruby3.2

@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.24.1](https://github.com/go-to-k/lamver/compare/v0.24.0...v0.24.1) - 2026-11-11
+
+- chore: build with Go 1.27.4 for security fixes by @go-to-k in https://github.com/go-to-k/lamver/pull/360
+
 ## [v0.24.0](https://github.com/go-to-k/lamver/compare/v0.23.1...v0.24.0) - 2026-11-11
 
 - ci: hold Dependabot version updates back for 7 days after a release by @go-to-k in https://github.com/go-to-k/lamver/pull/348
